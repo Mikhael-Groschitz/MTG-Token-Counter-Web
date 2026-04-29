@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* --- ADICIONE ESTAS 3 LINHAS AQUI --- */
+    "jsx": "react-jsx",                // 1. Corrige o erro "Cannot use JSX"
+    "baseUrl": ".",                    // 2. Define a base para os caminhos
+    "paths": {                         // 3. Ensina pro TypeScript o que é "@"
+      "@/*": ["./src/*"]
+    },
+    /* ------------------------------------ */
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
+}
