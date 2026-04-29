@@ -2,8 +2,6 @@ import React, { useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Link } from 'react-router-dom';
 import { GoArrowUpRight } from 'react-icons/go';
-import { Swords } from 'lucide-react';
-
 
 type CardNavLink = {
     label: string;
@@ -111,7 +109,7 @@ const CardNav: React.FC<CardNavProps> = ({
                     </button>
 
                     <Link to="/" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 text-white font-bold text-xl">
-                        <img src="/logo.png" alt="Logo TokenForge" className="w-16 h-16" />
+                        <img src="/logo.svg" alt="Logo TokenForge" className="w-16 h-16" />
                         <span>TokenForge</span>
                     </Link>
 
