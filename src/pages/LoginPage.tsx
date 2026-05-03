@@ -1,9 +1,10 @@
 import { useState, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useGoogleLogin } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { motion } from 'motion/react';
 import { Lock, LogIn, Loader2, User, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+
 
 export const LoginPage = () => {
     const navigate = useNavigate();
@@ -28,22 +29,6 @@ export const LoginPage = () => {
         }
     };
 
-    const googleLogin = useGoogleLogin({
-        onSuccess: async ({ access_token }) => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                await loginWithGoogle(access_token);
-                navigate('/');
-            } catch (err: any) {
-                setError(err.response?.data?.message || 'Falha ao autenticar com o Google.');
-            } finally {
-                setIsLoading(false);
-            }
-        },
-        onError: () => setError('Falha ao conectar com o Google. Tente novamente.'),
-    });
-
     return (
         <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden rounded-3xl">
             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
@@ -56,21 +41,41 @@ export const LoginPage = () => {
                 className="w-full max-w-md relative z-10 px-4"
             >
                 <div className="bg-gray-900/40 backdrop-blur-2xl border border-white/10 p-8 rounded-[2rem] shadow-2xl">
+
                     <div className="text-center mb-8">
                         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400 tracking-tight">
                             Bem-vindo de volta
                         </h1>
-                        <p className="text-gray-400 text-sm mt-2 font-medium">Acesse sua coleção de tokens.</p>
+                        <p className="text-gray-400 text-sm mt-2 font-medium">
+                            Acesse sua coleção de tokens.
+                        </p>
                     </div>
 
-                    <button
-                        onClick={() => googleLogin()}
-                        disabled={isLoading}
-                        className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 font-bold py-3 rounded-xl hover:bg-gray-100 disabled:opacity-60 transition-all active:scale-[0.98] mb-6 shadow-xl"
-                    >
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-                        Entrar com Google
-                    </button>
+                    {/* Google Login — usa credential (idToken) */}
+                    <div className="flex justify-center mb-6">
+                        <GoogleLogin
+                            onSuccess={async (credentialResponse) => {
+                                if (!credentialResponse.credential) return;
+                                setIsLoading(true);
+                                setError(null);
+                                try {
+                                    await loginWithGoogle(credentialResponse.credential);
+                                    navigate('/');
+                                } catch (err: any) {
+                                    setError(err.response?.data?.message || 'Falha ao autenticar com o Google.');
+                                } finally {
+                                    setIsLoading(false);
+                                }
+                            }}
+                            onError={() => setError('Falha ao conectar com o Google. Tente novamente.')}
+                            theme="filled_black"
+                            type="icon"
+                            shape="square"
+                            size="large"
+                            text="signin_with"
+                            width="368"
+                        />
+                    </div>
 
                     <div className="relative flex py-2 items-center mb-6">
                         <div className="flex-grow border-t border-gray-800" />

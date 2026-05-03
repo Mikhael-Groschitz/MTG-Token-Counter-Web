@@ -40,8 +40,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             bgColor: '#022c22',
             textColor: '#d1fae5',
             links: [
-                { label: 'Como Apoiar', href: '/support' }, // <--- Link para a nova página
-                { label: 'Github do Projeto', href: 'https://github.com' },
+                { label: 'Como Apoiar', href: '/support' },
+                { label: 'Github do Projeto', href: 'https://github.com/Mikhael-Groschitz/MTG-Token-Counter-Web' },
                 { label: 'Reportar Bug', href: '/bugreport' }
             ]
         }

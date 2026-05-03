@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useGoogleLogin } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { motion } from 'motion/react';
 import { Mail, Lock, User, ArrowRight, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -26,7 +26,6 @@ export const RegisterPage = () => {
         setError(null);
     };
 
-    // ── Validação local ───────────────────────────────────
     const validate = (): string | null => {
         if (formData.username.trim().length < 3)
             return 'O nome de usuário deve ter pelo menos 3 caracteres.';
@@ -37,7 +36,6 @@ export const RegisterPage = () => {
         return null;
     };
 
-    // ── Registro com email ────────────────────────────────
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         const validationError = validate();
@@ -51,42 +49,16 @@ export const RegisterPage = () => {
                 email: formData.email,
                 password: formData.password,
             });
-            // Redireciona para verificação de email após registro bem-sucedido
             navigate('/verify-email', { state: { email: formData.email } });
         } catch (err: any) {
-            setError(
-                err.response?.data?.message ||
-                'Erro ao criar conta. Tente novamente.'
-            );
+            setError(err.response?.data?.message || 'Erro ao criar conta. Tente novamente.');
         } finally {
             setIsLoading(false);
         }
     };
 
-    // ── Registro/Login com Google ─────────────────────────
-    const googleLogin = useGoogleLogin({
-        onSuccess: async ({ access_token }) => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                await loginWithGoogle(access_token);
-                navigate('/');
-            } catch (err: any) {
-                setError(
-                    err.response?.data?.message ||
-                    'Falha ao autenticar com o Google.'
-                );
-            } finally {
-                setIsLoading(false);
-            }
-        },
-        onError: () => setError('Falha ao conectar com o Google. Tente novamente.'),
-    });
-
     return (
         <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden rounded-3xl">
-
-            {/* Blooms de fundo */}
             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px]" />
 
@@ -107,15 +79,33 @@ export const RegisterPage = () => {
                         </p>
                     </div>
 
-                    {/* Botão Google */}
-                    <button
-                        onClick={() => googleLogin()}
-                        disabled={isLoading}
-                        className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 font-bold py-3 rounded-xl hover:bg-gray-100 disabled:opacity-60 transition-all active:scale-[0.98] mb-6 shadow-xl"
-                    >
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-                        Continuar com Google
-                    </button>
+                    {/* Google Login — usa credential (idToken) */}
+                    <div className="flex justify-center mb-6">
+                        <GoogleLogin
+                            onSuccess={async (credentialResponse) => {
+                                if (!credentialResponse.credential) return;
+                                setIsLoading(true);
+                                setError(null);
+                                try {
+                                    await loginWithGoogle(credentialResponse.credential);
+                                    navigate('/');
+                                } catch (err: any) {
+                                    setError(err.response?.data?.message || 'Falha ao autenticar com o Google.');
+                                } finally {
+                                    setIsLoading(false);
+                                }
+                            }}
+                            onError={() => setError('Falha ao conectar com o Google. Tente novamente.')}
+                            theme="filled_black"
+                            type="icon"
+                            shape="square"
+                            size="large"
+                            text="signin_with"
+                            width="368"
+                        />
+                    </div>
+
+
 
                     <div className="relative flex py-2 items-center mb-6">
                         <div className="flex-grow border-t border-gray-800" />
@@ -124,8 +114,6 @@ export const RegisterPage = () => {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
-
-                        {/* Nome de Usuário */}
                         <div className="space-y-1">
                             <label className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Nome de Usuário</label>
                             <div className="relative group">
@@ -144,7 +132,6 @@ export const RegisterPage = () => {
                             </div>
                         </div>
 
-                        {/* Email */}
                         <div className="space-y-1">
                             <label className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Email</label>
                             <div className="relative group">
@@ -163,7 +150,6 @@ export const RegisterPage = () => {
                             </div>
                         </div>
 
-                        {/* Senha */}
                         <div className="space-y-1">
                             <label className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Senha</label>
                             <div className="relative group">
@@ -187,7 +173,6 @@ export const RegisterPage = () => {
                                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
                             </div>
-                            {/* Indicador de força */}
                             {formData.password.length > 0 && (
                                 <div className="flex gap-1 mt-1.5">
                                     {[1, 2, 3].map(level => (
@@ -206,7 +191,6 @@ export const RegisterPage = () => {
                             )}
                         </div>
 
-                        {/* Confirmar Senha */}
                         <div className="space-y-1">
                             <label className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Confirmar Senha</label>
                             <div className="relative group">
@@ -229,7 +213,6 @@ export const RegisterPage = () => {
                             </div>
                         </div>
 
-                        {/* Erro inline */}
                         {error && (
                             <div className="flex items-center gap-2 text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm">
                                 <AlertCircle size={16} className="shrink-0" />
@@ -245,9 +228,7 @@ export const RegisterPage = () => {
                             {isLoading ? (
                                 <Loader2 className="animate-spin" size={22} />
                             ) : (
-                                <>
-                                    Criar Conta <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                                </>
+                                <>Criar Conta <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></>
                             )}
                         </button>
                     </form>
