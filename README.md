@@ -45,8 +45,8 @@ TokenForge é um projeto de fã, não oficial, que permite criar tokens personal
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/tokenforge-web.git
-cd tokenforge-web
+git clone https://github.com/Mikhael-Groschitz/MTG-Token-Counter-Web.git
+cd MTG-Token-Counter-Web
 
 # Instale as dependências
 npm install
