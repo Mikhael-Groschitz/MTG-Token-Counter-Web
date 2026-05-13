@@ -1,6 +1,7 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
+import LoginSocialFacebook from '@greatsumini/react-facebook-login';
 import { motion } from 'motion/react';
 import { Mail, Lock, User, ArrowRight, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -9,7 +10,7 @@ const MIN_PASSWORD_LENGTH = 8;
 
 export const RegisterPage = () => {
     const navigate = useNavigate();
-    const { register, loginWithGoogle } = useAuth();
+    const { register, loginWithGoogle, loginWithFacebook } = useAuth();
 
     const [formData, setFormData] = useState({
         username: '',
@@ -79,33 +80,59 @@ export const RegisterPage = () => {
                         </p>
                     </div>
 
-                    {/* Google Login — usa credential (idToken) */}
-                    <div className="flex justify-center mb-6">
-                        <GoogleLogin
-                            onSuccess={async (credentialResponse) => {
-                                if (!credentialResponse.credential) return;
+                    {/* Login social — Google e Facebook lado a lado */}
+                    <div className="flex justify-center items-center gap-3 mb-6">
+                        <div className="flex items-center">
+                            <GoogleLogin
+                                onSuccess={async (credentialResponse) => {
+                                    if (!credentialResponse.credential) return;
+                                    setIsLoading(true);
+                                    setError(null);
+                                    try {
+                                        await loginWithGoogle(credentialResponse.credential);
+                                        navigate('/');
+                                    } catch (err: any) {
+                                        setError(err.response?.data?.message || 'Falha ao autenticar com o Google.');
+                                    } finally {
+                                        setIsLoading(false);
+                                    }
+                                }}
+                                onError={() => setError('Falha ao conectar com o Google. Tente novamente.')}
+                                theme="filled_black"
+                                type="icon"
+                                shape="square"
+                                size="large"
+                            />
+                        </div>
+
+                        <LoginSocialFacebook
+                            appId={import.meta.env.VITE_FACEBOOK_APP_ID}
+                            onResolve={async ({ data }) => {
+                                if (!data?.accessToken) return;
                                 setIsLoading(true);
                                 setError(null);
                                 try {
-                                    await loginWithGoogle(credentialResponse.credential);
+                                    await loginWithFacebook(data.accessToken);
                                     navigate('/');
                                 } catch (err: any) {
-                                    setError(err.response?.data?.message || 'Falha ao autenticar com o Google.');
+                                    setError(err.response?.data?.message || 'Falha ao autenticar com o Facebook.');
                                 } finally {
                                     setIsLoading(false);
                                 }
                             }}
-                            onError={() => setError('Falha ao conectar com o Google. Tente novamente.')}
-                            theme="filled_black"
-                            type="icon"
-                            shape="square"
-                            size="large"
-                            text="signin_with"
-                            width="368"
-                        />
+                            onReject={() => setError('Falha ao conectar com o Facebook. Tente novamente.')}
+                        >
+                            <button
+                                type="button"
+                                className="w-10 h-10 rounded-md bg-[#1877F2] hover:bg-[#166FE5] flex items-center justify-center transition-colors"
+                                aria-label="Entrar com Facebook"
+                            >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                </svg>
+                            </button>
+                        </LoginSocialFacebook>
                     </div>
-
-
 
                     <div className="relative flex py-2 items-center mb-6">
                         <div className="flex-grow border-t border-gray-800" />

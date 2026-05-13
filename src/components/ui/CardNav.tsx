@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Link } from 'react-router-dom';
 import { GoArrowUpRight } from 'react-icons/go';
+import { useAuth } from '@/context/AuthContext';
 
 type CardNavLink = {
     label: string;
@@ -32,15 +33,16 @@ const CardNav: React.FC<CardNavProps> = ({
                                              buttonBgColor = '#9333ea',
                                              buttonTextColor = '#fff'
                                          }) => {
+    // 1. Consumindo o estado global de autenticação
+    const { user, isAuthenticated, logout } = useAuth();
+
     const [isExpanded, setIsExpanded] = useState(false);
     const navRef = useRef<HTMLDivElement>(null);
     const cardsRef = useRef<HTMLDivElement[]>([]);
     const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-    // CORREÇÃO: Calcula a altura de forma dinâmica para não cortar o conteúdo
     const calculateHeight = () => {
         const isMobile = window.matchMedia('(max-width: 768px)').matches;
-        // No mobile damos uma altura fixa generosa, no desktop usamos 'auto'
         return isMobile ? 550 : "auto";
     };
 
@@ -48,16 +50,13 @@ const CardNav: React.FC<CardNavProps> = ({
         const ctx = gsap.context(() => {
             const tl = gsap.timeline({ paused: true });
 
-            // Animação de abertura do container
             tl.to(navRef.current, {
                 height: calculateHeight(),
                 duration: 0.5,
                 ease: 'power3.inOut',
-                // Adiciona um pequeno padding interno quando aberto para respiro
                 paddingBottom: "1.5rem"
             });
 
-            // Animação dos cards aparecendo
             tl.fromTo(cardsRef.current,
                 { y: 30, opacity: 0 },
                 { y: 0, opacity: 1, duration: 0.4, stagger: 0.1, ease: 'power2.out' },
@@ -93,7 +92,7 @@ const CardNav: React.FC<CardNavProps> = ({
         <div className={`fixed top-4 left-0 right-0 z-50 flex justify-center px-4 ${className}`}>
             <nav
                 ref={navRef}
-                className="w-full max-w-[800px] h-[60px] rounded-2xl shadow-2xl relative overflow-hidden"
+                className="w-full max-w-[800px] h-[60px] rounded-2xl shadow-2xl relative overflow-hidden transition-all duration-300"
                 style={{ backgroundColor: baseColor }}
             >
                 {/* --- BARRA SUPERIOR (Sempre visível) --- */}
@@ -113,13 +112,31 @@ const CardNav: React.FC<CardNavProps> = ({
                         <span>TokenForge</span>
                     </Link>
 
-                    <Link
-                        to="/login"
-                        className="hidden md:flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-transform hover:scale-105"
-                        style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
-                    >
-                        Entrar na sua conta
-                    </Link>
+                    {/* Lógica Condicional de Login/Perfil */}
+                    {isAuthenticated && user ? (
+                        <div className="hidden md:flex items-center gap-3">
+                            <span className="text-white text-sm font-medium">
+                                Olá, {(user.name || user.username || 'Usuário').split(' ')[0]}
+                            </span>
+                            <button
+                                onClick={() => {
+                                    logout();
+                                    if (isExpanded) toggleMenu();
+                                }}
+                                className="px-3 py-1.5 rounded-lg font-medium text-xs bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+                            >
+                                Sair
+                            </button>
+                        </div>
+                    ) : (
+                        <Link
+                            to="/login"
+                            className="hidden md:flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-transform hover:scale-105"
+                            style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
+                        >
+                            Entrar na sua conta
+                        </Link>
+                    )}
                 </div>
 
                 {/* --- CONTEÚDO EXPANDIDO --- */}

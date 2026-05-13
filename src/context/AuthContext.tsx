@@ -32,8 +32,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async (credentials: LoginCredentials) => {
         const data = await authService.login(credentials);
-        setUser({ username: data.username, email: data.email });
+        // IMPORTANTE: data.user vem do seu Mock no api.ts
+        // Certifique-se de que as chaves batem com o seu tipo 'User'
+        if (data.user) {
+            setUser(data.user);
+        } else {
+            // Fallback caso a estrutura mude
+            setUser({
+                name: data.name || data.username,
+                email: data.email
+            } as User);
+        }
     };
+
 
     const register = async (userData: RegisterData) => {
         await authService.register(userData);
@@ -43,6 +54,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const loginWithGoogle = async (googleToken: string) => {
         const data = await authService.loginWithGoogle(googleToken);
         setUser({ username: data.username, email: data.email });
+    };
+
+    const loginWithFacebook = async (accessToken: string) => {
+        const response = await api.post('/auth/facebook', { accessToken });
+        setToken(response.data.token);
     };
 
     const logout = () => {

@@ -16,7 +16,6 @@ export const authService = {
         return data;
     },
 
-    // Recebe o idToken do Google e envia para o backend validar
     async loginWithGoogle(idToken: string): Promise<AuthResponse> {
         const { data } = await api.post<AuthResponse>('/auth/google', { id_token: idToken });
         localStorage.setItem(USER_KEY, JSON.stringify(data));

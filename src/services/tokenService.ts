@@ -2,7 +2,6 @@ import api from './api';
 import { TokenData } from '@/types';
 import { TokenLayout } from '@/types';
 
-// Contrato com o backend Java (snake_case — Jackson SNAKE_CASE strategy)
 export interface TokenResponse {
     id: string;
     name: string;
@@ -15,7 +14,6 @@ export interface TokenResponse {
     layout: string;
 }
 
-// Backend → Frontend (snake_case → camelCase)
 export const mapToTokenData = (t: TokenResponse): TokenData => ({
     id: t.id,
     name: t.name,
@@ -29,7 +27,6 @@ export const mapToTokenData = (t: TokenResponse): TokenData => ({
     count: 1,
 });
 
-// Frontend → Backend (camelCase → snake_case)
 const mapToPayload = (token: Omit<TokenData, 'id' | 'count'>): Omit<TokenResponse, 'id'> => ({
     name: token.name,
     type_line: token.typeLine,

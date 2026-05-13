@@ -1,14 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { AuthProvider } from './context/AuthContext'; // <--- TEM QUE TER AS CHAVES { }
+import { AuthProvider } from './context/AuthContext';
 import App from './App'
-import './index.css' // Importante: O Tailwind carrega aqui
+import './index.css'
 
-// Recupera o ID do arquivo .env (VITE_GOOGLE_CLIENT_ID)
+
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-// Uma verificação de segurança no console para te ajudar a debugar
 if (!clientId) {
     console.warn("⚠️ AVISO: VITE_GOOGLE_CLIENT_ID não foi encontrado no arquivo .env. O login com Google não funcionará.");
 }

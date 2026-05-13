@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Save, Wand2, Upload, Image as ImageIcon, LayoutList, Maximize, Link as LinkIcon, AlertCircle } from 'lucide-react';
 import { TokenData } from '@/types';
-import { tokenService } from '@/services/tokenService';
 
 interface TokenModalProps {
     isOpen: boolean;
@@ -31,7 +30,6 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
     const [baseType, setBaseType] = useState('Creature');
     const [subType, setSubType] = useState('');
     const [imageSource, setImageSource] = useState<'upload' | 'url'>('upload');
-    const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<TokenData>(EMPTY_FORM);
 
@@ -82,38 +80,25 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
         reader.readAsDataURL(file);
     };
 
-    // ── Submit ────────────────────────────────────────────
-    const handleSubmit = async () => {
+    // ── Submit Local (Sem dependência de API/Mock) ────────
+    const handleSubmit = () => {
         if (!formData.name.trim()) {
             setError('O token precisa de um nome.');
             return;
         }
 
-        setIsSaving(true);
-        setError(null);
+        // Criamos o objeto final para visualização
+        const processedToken: TokenData = {
+            ...formData,
+            // Se for novo, geramos um ID único local. Se for edição, mantemos o ID.
+            id: formData.id || `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            // Garante que o count seja pelo menos 1 se for novo
+            count: formData.count || 1
+        };
 
-        // Omite id e count — tokenService cuida do mapeamento snake_case
-        const { id, count, ...payload } = formData;
-
-        try {
-            let saved: TokenData;
-            if (isEditing && initialData?.id) {
-                saved = await tokenService.update(initialData.id, payload);
-                // Preserva o count atual da mesa ao editar
-                saved = { ...saved, count: initialData.count };
-            } else {
-                saved = await tokenService.create(payload);
-            }
-            onSave(saved);
-            onClose();
-        } catch (err: any) {
-            setError(
-                err.response?.data?.message ||
-                'Erro ao salvar. Verifique a conexão com o servidor.'
-            );
-        } finally {
-            setIsSaving(false);
-        }
+        // Envia para o componente pai gerenciar no estado da tela
+        onSave(processedToken);
+        onClose();
     };
 
     return (
@@ -326,15 +311,10 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
                             {/* Botão salvar */}
                             <button
                                 onClick={handleSubmit}
-                                disabled={isSaving}
-                                className="mt-6 w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-purple-900/30 group"
+                                className="mt-6 w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-purple-900/30 group"
                             >
-                                {isSaving ? (
-                                    <span className="animate-spin border-2 border-white/20 border-t-white rounded-full w-5 h-5" />
-                                ) : (
-                                    <Save size={20} className="group-hover:rotate-12 transition-transform" />
-                                )}
-                                {isSaving ? 'Forjando...' : isEditing ? 'Salvar Alterações' : 'Forjar Token'}
+                                <Save size={20} className="group-hover:rotate-12 transition-transform" />
+                                {isEditing ? 'Salvar Alterações' : 'Forjar Token'}
                             </button>
                         </div>
                     </motion.div>
