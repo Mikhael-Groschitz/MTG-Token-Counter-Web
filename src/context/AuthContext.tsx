@@ -37,7 +37,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const register = async (userData: RegisterData) => {
         await authService.register(userData);
-        // Não loga automaticamente — aguarda verificação de email
     };
 
     const loginWithGoogle = async (googleToken: string) => {
@@ -73,7 +72,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 };
 
-// Exportado aqui para uso direto — useAuth.ts também reexporta para compatibilidade
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) throw new Error('useAuth deve ser usado dentro de um AuthProvider');

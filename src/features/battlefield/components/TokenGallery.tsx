@@ -1,17 +1,15 @@
 import React, { useEffect } from 'react';
 import { TokenCard } from './TokenCard';
-import { useTokens } from '@/hooks/useTokens'; // O motor que criamos
+import { useTokens } from '@/hooks/useTokens'; 
 import { Loader2, Plus, Library } from 'lucide-react';
 
 export const TokenGallery: React.FC = () => {
-    // Agora toda a lógica de estado e erro vem do nosso hook customizado
     const { tokens, loading, error, fetchTokens } = useTokens();
 
     useEffect(() => {
         fetchTokens();
     }, [fetchTokens]);
 
-    // UI de Carregamento (Mantida a sua identidade visual de MTG)
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] text-purple-400">
@@ -21,7 +19,6 @@ export const TokenGallery: React.FC = () => {
         );
     }
 
-    // UI de Erro
     if (error) {
         return (
             <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-8 text-center max-w-md mx-auto">

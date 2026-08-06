@@ -9,7 +9,7 @@ export function ReportPage() {
             <BugReportForm
                 onSubmit={(data) => {
                     console.log('Bug report enviado:', data);
-                    // Aqui você pode chamar sua API, ex: await api.post('/bugs', data)
+                    // Aqui  pode chamar a API, ex: await api.post('/bugs', data)
                 }}
                 onCancel={() => navigate(-1)}
             />

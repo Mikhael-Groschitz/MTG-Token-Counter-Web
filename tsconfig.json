@@ -14,10 +14,9 @@
     "moduleDetection": "force",
     "noEmit": true,
 
-    /* --- ADICIONE ESTAS 3 LINHAS AQUI --- */
-    "jsx": "react-jsx",                // 1. Corrige o erro "Cannot use JSX"
-    "baseUrl": ".",                    // 2. Define a base para os caminhos
-    "paths": {                         // 3. Ensina pro TypeScript o que é "@"
+    "jsx": "react-jsx",                
+    "baseUrl": ".",                    
+    "paths": {                         
       "@/*": ["./src/*"]
     },
     /* ------------------------------------ */

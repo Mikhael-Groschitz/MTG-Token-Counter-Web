@@ -18,10 +18,8 @@ export const ForgotPasswordPage = () => {
     };
 
     return (
-        // min-h-[90vh] para manter o alinhamento com Login/Register
         <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden rounded-3xl">
 
-            {/* --- BLOOMS DE FUNDO (Ajustados para preencher a tela) --- */}
             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px]" />
 
@@ -31,7 +29,6 @@ export const ForgotPasswordPage = () => {
                 transition={{ duration: 0.5 }}
                 className="w-full max-w-md relative z-10 px-4"
             >
-                {/* Estilo de Vidro Premium: backdrop-blur-2xl e rounded-[2rem] */}
                 <div className="bg-gray-900/40 backdrop-blur-2xl border border-white/10 p-8 rounded-[2rem] shadow-2xl min-h-[450px] flex flex-col justify-center">
 
                     <AnimatePresence mode="wait">
@@ -115,7 +112,6 @@ export const ForgotPasswordPage = () => {
                         )}
                     </AnimatePresence>
 
-                    {/* Footer do Card com separação sutil */}
                     <div className="mt-8 pt-6 border-t border-white/5 text-center">
                         <Link
                             to="/login"

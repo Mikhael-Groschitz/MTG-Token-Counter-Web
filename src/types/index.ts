@@ -1,18 +1,17 @@
-// src/types/index.ts
 export type TokenColor = 'white' | 'blue' | 'black' | 'red' | 'green' | 'gold' | 'colorless';
-export type TokenLayout = 'classic' | 'fullArt'; // Nova tipagem
+export type TokenLayout = 'classic' | 'fullArt'; 
 
 export interface TokenData {
     id: string;
     name: string;
-    imageUrl?: string; // Pode ser undefined se o usuário ainda não subiu foto
-    typeLine: string;  // Ex: "Token Creature - Goblin"
+    imageUrl?: string; 
+    typeLine: string;  
     color: TokenColor;
-    power?: string;    // String pois pode ser "*" ou "X"
+    power?: string;  
     toughness?: string;
-    abilities?: string; // Texto da caixa
-    count: number; // <--- NOVO CAMPO OBRIGATÓRIO
-    layout?: TokenLayout; // <--- Novo campo opcional
+    abilities?: string; 
+    count: number; 
+    layout?: TokenLayout;
 }
 
 export interface User {
@@ -29,7 +28,7 @@ export interface AuthResponse {
 }
 
 export interface LoginCredentials {
-    identifier: string; // Alinhado com o backend que fizemos
+    identifier: string; 
     password: string;
 }
 

@@ -11,7 +11,7 @@ interface LibraryPickModalProps {
     onSelect: (token: TokenData) => void;
     onCreateNew: () => void;
     libraryTokens: TokenData[];
-    activeTokenIds: string[]; // IDs dos tokens já na mesa
+    activeTokenIds: string[]; 
 }
 
 export const LibraryPickModal = ({

@@ -59,7 +59,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 {children}
             </main>
 
-            {/* Footer Minimalista sem links pessoais */}
             <footer className="w-full py-8 mt-auto border-t border-gray-900 bg-gray-950/50">
                 <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-3 text-center">
                     <p className="text-sm text-gray-500 font-medium tracking-wide">

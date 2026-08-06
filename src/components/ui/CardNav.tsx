@@ -37,10 +37,8 @@ const CardNav: React.FC<CardNavProps> = ({
     const cardsRef = useRef<HTMLDivElement[]>([]);
     const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-    // CORREÇÃO: Calcula a altura de forma dinâmica para não cortar o conteúdo
     const calculateHeight = () => {
         const isMobile = window.matchMedia('(max-width: 768px)').matches;
-        // No mobile damos uma altura fixa generosa, no desktop usamos 'auto'
         return isMobile ? 550 : "auto";
     };
 
@@ -48,16 +46,13 @@ const CardNav: React.FC<CardNavProps> = ({
         const ctx = gsap.context(() => {
             const tl = gsap.timeline({ paused: true });
 
-            // Animação de abertura do container
             tl.to(navRef.current, {
                 height: calculateHeight(),
                 duration: 0.5,
                 ease: 'power3.inOut',
-                // Adiciona um pequeno padding interno quando aberto para respiro
                 paddingBottom: "1.5rem"
             });
 
-            // Animação dos cards aparecendo
             tl.fromTo(cardsRef.current,
                 { y: 30, opacity: 0 },
                 { y: 0, opacity: 1, duration: 0.4, stagger: 0.1, ease: 'power2.out' },
@@ -96,7 +91,6 @@ const CardNav: React.FC<CardNavProps> = ({
                 className="w-full max-w-[800px] h-[60px] rounded-2xl shadow-2xl relative overflow-hidden"
                 style={{ backgroundColor: baseColor }}
             >
-                {/* --- BARRA SUPERIOR (Sempre visível) --- */}
                 <div className="absolute inset-x-0 top-0 h-[60px] flex items-center justify-between px-6 z-20">
                     <button
                         onClick={toggleMenu}
@@ -122,7 +116,6 @@ const CardNav: React.FC<CardNavProps> = ({
                     </Link>
                 </div>
 
-                {/* --- CONTEÚDO EXPANDIDO --- */}
                 <div className="pt-[70px] pb-4 px-4 flex flex-col md:flex-row gap-4 items-stretch justify-center">
                     {items.map((item, idx) => (
                         <div

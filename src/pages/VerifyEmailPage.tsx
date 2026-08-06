@@ -15,16 +15,13 @@ export const VerifyEmailPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Cooldown de reenvio
     const [cooldown, setCooldown] = useState(0);
     const [resendSuccess, setResendSuccess] = useState(false);
 
-    // Redireciona se chegou sem email no state
     useEffect(() => {
         if (!email) navigate('/register');
     }, [email, navigate]);
 
-    // Countdown do cooldown
     useEffect(() => {
         if (cooldown <= 0) return;
         const timer = setTimeout(() => setCooldown(c => c - 1), 1000);
@@ -33,7 +30,6 @@ export const VerifyEmailPage = () => {
 
     if (!email) return null;
 
-    // ── Verificar código ──────────────────────────────────
     const handleVerify = async (e: FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -54,7 +50,6 @@ export const VerifyEmailPage = () => {
         }
     };
 
-    // ── Reenviar código ───────────────────────────────────
     const handleResend = async () => {
         if (cooldown > 0) return;
         setResendSuccess(false);

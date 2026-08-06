@@ -35,7 +35,6 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<TokenData>(EMPTY_FORM);
 
-    // ── Sincroniza form ao abrir ──────────────────────────
     useEffect(() => {
         if (!isOpen) return;
         setError(null);
@@ -53,7 +52,6 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
         }
     }, [isOpen, initialData]);
 
-    // ── Reconstrói typeLine ao mudar baseType/subType ─────
     useEffect(() => {
         const fullType = subType.trim()
             ? `Token ${baseType} — ${subType.trim()}`
@@ -61,7 +59,6 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
         setFormData(prev => ({ ...prev, typeLine: fullType }));
     }, [baseType, subType]);
 
-    // ── Handlers ─────────────────────────────────────────
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -82,7 +79,6 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
         reader.readAsDataURL(file);
     };
 
-    // ── Submit ────────────────────────────────────────────
     const handleSubmit = async () => {
         if (!formData.name.trim()) {
             setError('O token precisa de um nome.');
@@ -92,14 +88,12 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
         setIsSaving(true);
         setError(null);
 
-        // Omite id e count — tokenService cuida do mapeamento snake_case
         const { id, count, ...payload } = formData;
 
         try {
             let saved: TokenData;
             if (isEditing && initialData?.id) {
                 saved = await tokenService.update(initialData.id, payload);
-                // Preserva o count atual da mesa ao editar
                 saved = { ...saved, count: initialData.count };
             } else {
                 saved = await tokenService.create(payload);
@@ -120,14 +114,12 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
         <AnimatePresence>
             {isOpen && (
                 <>
-                    {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                         onClick={onClose}
                         className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50"
                     />
 
-                    {/* Modal */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -136,7 +128,6 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
                     >
                         <div className="bg-gray-900 border border-gray-700 w-full max-w-lg p-6 rounded-2xl shadow-2xl pointer-events-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
 
-                            {/* Cabeçalho */}
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
                                     <Wand2 className="text-purple-400" />
@@ -148,7 +139,6 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
                             </div>
 
                             <div className="space-y-5">
-                                {/* Seletor de layout */}
                                 <div className="space-y-2">
                                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest">Estilo do Card</label>
                                     <div className="grid grid-cols-2 gap-2">
@@ -169,7 +159,6 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
                                     </div>
                                 </div>
 
-                                {/* Seletor de origem da arte */}
                                 <div className="space-y-3">
                                     <div className="flex gap-4 border-b border-gray-800 pb-2">
                                         {(['upload', 'url'] as const).map(src => (
@@ -287,7 +276,6 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
                                     </div>
                                 </div>
 
-                                {/* Habilidades */}
                                 <div className={formData.layout === 'fullArt' ? 'opacity-30 pointer-events-none' : ''}>
                                     <label className="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-tighter">
                                         Habilidades {formData.layout === 'fullArt' && '(Oculto no Full Art)'}
@@ -302,7 +290,6 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
                                     />
                                 </div>
 
-                                {/* Stats */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-400 uppercase">Poder</label>
@@ -315,7 +302,6 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
                                 </div>
                             </div>
 
-                            {/* Erro inline */}
                             {error && (
                                 <div className="mt-4 flex items-center gap-2 text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm">
                                     <AlertCircle size={16} className="shrink-0" />
@@ -323,7 +309,6 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
                                 </div>
                             )}
 
-                            {/* Botão salvar */}
                             <button
                                 onClick={handleSubmit}
                                 disabled={isSaving}

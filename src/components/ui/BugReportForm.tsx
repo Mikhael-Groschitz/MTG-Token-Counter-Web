@@ -142,7 +142,6 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
 
     return (
         <form onSubmit={handleSubmit} className="space-y-5 max-w-xl w-full">
-            {/* Header */}
             <div>
                 <div className="flex items-center gap-2.5 mb-1">
                     <div className="w-7 h-7 bg-red-500/20 border border-red-500/30 rounded-md flex items-center justify-center">
@@ -155,7 +154,6 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                 </p>
             </div>
 
-            {/* Título + Módulo */}
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label className={labelClass}>
@@ -189,7 +187,6 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                 </div>
             </div>
 
-            {/* Severidade */}
             <div>
                 <label className={labelClass}>
                     Severidade <span className="text-red-400">*</span>
@@ -214,7 +211,6 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                 </div>
             </div>
 
-            {/* Descrição */}
             <div>
                 <label className={labelClass}>
                     Descrição <span className="text-red-400">*</span>
@@ -230,7 +226,6 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                 />
             </div>
 
-            {/* Passos para reproduzir */}
             <div>
                 <label className={labelClass}>Passos para reproduzir</label>
                 <textarea
@@ -243,7 +238,6 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                 />
             </div>
 
-            {/* Ambiente + Versão */}
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label className={labelClass}>Ambiente</label>
@@ -274,7 +268,6 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                 </div>
             </div>
 
-            {/* Anexos */}
             <div>
                 <label className={labelClass}>Anexos</label>
                 <label className="flex flex-col items-center justify-center w-full border border-dashed border-white/15 rounded-lg py-5 bg-white/5 cursor-pointer hover:border-white/30 hover:bg-white/8 transition-colors">
@@ -310,7 +303,6 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                 )}
             </div>
 
-            {/* Actions */}
             <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
                 {onCancel && (
                     <button
@@ -332,8 +324,7 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
     );
 }
 
-/* ── Inline icons ── */
-interface IconProps {
+/* ── Inline icons ── */interface IconProps {
     className?: string;
 }
 

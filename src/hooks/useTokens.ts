@@ -7,7 +7,7 @@ const MAX_TOKENS = 5;
 export const useTokens = () => {
     const [tokens, setTokens] = useState<TokenData[]>([]);
     const [loading, setLoading] = useState(false);
-    const [isMutating, setIsMutating] = useState(false); // separado do loading de lista
+    const [isMutating, setIsMutating] = useState(false); 
     const [error, setError] = useState<string | null>(null);
 
     // ── READ ──────────────────────────────────────────────
@@ -76,8 +76,8 @@ export const useTokens = () => {
 
     return {
         tokens,
-        loading,       // true durante fetchTokens
-        isMutating,    // true durante create/update/delete
+        loading,       
+        isMutating,   
         error,
         hasReachedLimit: tokens.length >= MAX_TOKENS,
         fetchTokens,
