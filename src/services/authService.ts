@@ -16,14 +16,12 @@ export const authService = {
         return data;
     },
 
-    // Recebe o idToken do Google e envia para o backend validar
     async loginWithGoogle(idToken: string): Promise<AuthResponse> {
         const { data } = await api.post<AuthResponse>('/auth/google', { id_token: idToken });
         localStorage.setItem(USER_KEY, JSON.stringify(data));
         return data;
     },
 
-    // Recebe o accessToken do Facebook e envia para o backend validar
     async loginWithFacebook(accessToken: string): Promise<AuthResponse> {
         const { data } = await api.post<AuthResponse>('/auth/facebook', { access_token: accessToken });
         localStorage.setItem(USER_KEY, JSON.stringify(data));

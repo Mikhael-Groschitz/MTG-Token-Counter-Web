@@ -2,7 +2,7 @@ import axios from 'axios';
 import { USER_KEY } from './authService';
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'https://mtg-token-counter-backend.onrender.com',
+    baseURL: (import.meta.env.VITE_API_URL || 'https://mtg-token-counter-backend.onrender.com').trim(),
     headers: {
         'Content-Type': 'application/json',
     },
