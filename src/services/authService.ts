@@ -23,12 +23,27 @@ export const authService = {
         return data;
     },
 
+    // Recebe o accessToken do Facebook e envia para o backend validar
+    async loginWithFacebook(accessToken: string): Promise<AuthResponse> {
+        const { data } = await api.post<AuthResponse>('/auth/facebook', { access_token: accessToken });
+        localStorage.setItem(USER_KEY, JSON.stringify(data));
+        return data;
+    },
+
     async verifyEmail(email: string, code: string): Promise<void> {
         await api.post('/auth/verify-email', { email, code });
     },
 
+    async resendVerificationCode(email: string): Promise<void> {
+        await api.post('/auth/resend-verification', { email });
+    },
+
     async forgotPassword(email: string): Promise<void> {
         await api.post('/auth/forgot-password', { email });
+    },
+
+    async resetPassword(token: string, newPassword: string): Promise<void> {
+        await api.post('/auth/reset-password', { token, new_password: newPassword });
     },
 
     logout(): void {

@@ -1,14 +1,17 @@
 import { useState, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
+import FacebookLogin from '@greatsumini/react-facebook-login';
+import { FaFacebook } from 'react-icons/fa';
 import { motion } from 'motion/react';
 import { Lock, LogIn, Loader2, User, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
+const FACEBOOK_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID as string | undefined;
 
 export const LoginPage = () => {
     const navigate = useNavigate();
-    const { login, loginWithGoogle } = useAuth();
+    const { login, loginWithGoogle, loginWithFacebook } = useAuth();
 
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
@@ -21,7 +24,7 @@ export const LoginPage = () => {
         setError(null);
         try {
             await login({ identifier, password });
-            navigate('/');
+            navigate('/jogar');
         } catch (err: any) {
             setError(err.response?.data?.message || 'Email/usuário ou senha incorretos.');
         } finally {
@@ -60,7 +63,7 @@ export const LoginPage = () => {
                                 setError(null);
                                 try {
                                     await loginWithGoogle(credentialResponse.credential);
-                                    navigate('/');
+                                    navigate('/jogar');
                                 } catch (err: any) {
                                     setError(err.response?.data?.message || 'Falha ao autenticar com o Google.');
                                 } finally {
@@ -76,6 +79,38 @@ export const LoginPage = () => {
                             width="368"
                         />
                     </div>
+
+                    {/* Facebook Login — usa accessToken */}
+                    {FACEBOOK_APP_ID && (
+                        <div className="mb-6">
+                            <FacebookLogin
+                                appId={FACEBOOK_APP_ID}
+                                onSuccess={async (response) => {
+                                    setIsLoading(true);
+                                    setError(null);
+                                    try {
+                                        await loginWithFacebook(response.accessToken);
+                                        navigate('/jogar');
+                                    } catch (err: any) {
+                                        setError(err.response?.data?.message || 'Falha ao autenticar com o Facebook.');
+                                    } finally {
+                                        setIsLoading(false);
+                                    }
+                                }}
+                                onFail={() => setError('Falha ao conectar com o Facebook. Tente novamente.')}
+                                render={({ onClick }) => (
+                                    <button
+                                        type="button"
+                                        onClick={onClick}
+                                        className="w-full flex items-center justify-center gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white font-semibold rounded-xl py-3 transition-colors"
+                                    >
+                                        <FaFacebook size={20} />
+                                        Continuar com Facebook
+                                    </button>
+                                )}
+                            />
+                        </div>
+                    )}
 
                     <div className="relative flex py-2 items-center mb-6">
                         <div className="flex-grow border-t border-gray-800" />
@@ -104,7 +139,7 @@ export const LoginPage = () => {
                         <div className="space-y-1">
                             <div className="flex justify-between items-center px-1">
                                 <label className="text-[10px] font-bold uppercase text-gray-500 tracking-wider">Senha</label>
-                                <Link to="/forgot-password" className="text-[11px] text-purple-400 hover:text-purple-300 transition-colors">
+                                <Link to="/esqueci-senha" className="text-[11px] text-purple-400 hover:text-purple-300 transition-colors">
                                     Esqueceu a senha?
                                 </Link>
                             </div>
@@ -145,7 +180,7 @@ export const LoginPage = () => {
 
                     <p className="text-center text-gray-500 text-sm mt-8">
                         Não tem uma conta?{' '}
-                        <Link to="/register" className="text-purple-400 hover:text-purple-300 font-bold transition-colors">
+                        <Link to="/cadastro" className="text-purple-400 hover:text-purple-300 font-bold transition-colors">
                             Registre-se agora
                         </Link>
                     </p>

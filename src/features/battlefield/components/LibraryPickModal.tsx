@@ -118,7 +118,7 @@ export const LibraryPickModal = ({
                                             Salve até 5 tokens no Dashboard para acessá-los em qualquer partida.
                                         </p>
                                         <Link
-                                            to="/dashboard"
+                                            to="/painel"
                                             onClick={onClose}
                                             className="text-purple-400 hover:text-purple-300 text-sm font-bold underline underline-offset-4 transition-colors"
                                         >

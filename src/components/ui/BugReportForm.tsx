@@ -24,11 +24,10 @@ interface FormState {
 
 interface BugReportPayload extends FormState {
     files: File[];
-    ticketId: string;
 }
 
 interface BugReportFormProps {
-    onSubmit?: (data: BugReportPayload) => void;
+    onSubmit?: (data: BugReportPayload) => Promise<void>;
     onCancel?: () => void;
 }
 
@@ -76,13 +75,10 @@ const inputClass =
 const labelClass =
     "block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wide";
 
-function generateTicketId(): string {
-    return "BUG-" + Math.floor(1000 + Math.random() * 9000);
-}
-
 export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps) {
     const [submitted, setSubmitted] = useState<boolean>(false);
-    const [ticketId, setTicketId] = useState<string>("");
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
     const [files, setFiles] = useState<File[]>([]);
     const [form, setForm] = useState<FormState>({
         title: "",
@@ -110,15 +106,23 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
         setFiles((prev) => prev.filter((_, i) => i !== index));
     }
 
-    function handleSubmit(e: FormEvent<HTMLFormElement>): void {
+    async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
         e.preventDefault();
         if (!form.title || !form.description) return;
 
-        const id = generateTicketId();
-        setTicketId(id);
-        setSubmitted(true);
-
-        onSubmit?.({ ...form, files, ticketId: id });
+        setSubmitError(null);
+        setIsSubmitting(true);
+        try {
+            await onSubmit?.({ ...form, files });
+            setSubmitted(true);
+        } catch (err: any) {
+            setSubmitError(
+                err.response?.data?.message ||
+                "Não foi possível enviar o report. Tente novamente em instantes."
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     if (submitted) {
@@ -131,11 +135,8 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                     Bug reportado com sucesso!
                 </h3>
                 <p className="text-sm text-white/50">
-                    Nossa equipe foi notificada e irá analisar o problema em breve.
+                    Recebemos seu report por e-mail e vamos analisar o problema em breve.
                 </p>
-                <span className="mt-4 inline-block px-4 py-1.5 bg-white/8 border border-white/15 rounded-full text-sm font-mono text-white/60">
-          {ticketId}
-        </span>
             </div>
         );
     }
@@ -273,7 +274,7 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                 <label className="flex flex-col items-center justify-center w-full border border-dashed border-white/15 rounded-lg py-5 bg-white/5 cursor-pointer hover:border-white/30 hover:bg-white/8 transition-colors">
                     <UploadIcon className="w-5 h-5 text-white/30 mb-1" />
                     <span className="text-sm text-white/40">Clique para anexar ou arraste arquivos aqui</span>
-                    <span className="text-xs text-white/25 mt-0.5">PNG, JPG, GIF, MP4, logs — até 10MB</span>
+                    <span className="text-xs text-white/25 mt-0.5">PNG, JPG, GIF, MP4, logs — até 5MB por arquivo</span>
                     <input
                         type="file"
                         multiple
@@ -303,21 +304,29 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                 )}
             </div>
 
+            {submitError && (
+                <div className="flex items-center gap-2 text-red-300 bg-red-500/10 border border-red-500/25 rounded-lg px-3 py-2.5 text-sm">
+                    {submitError}
+                </div>
+            )}
+
             <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
                 {onCancel && (
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="px-4 py-2 text-sm border border-white/15 rounded-lg text-white/50 hover:bg-white/8 hover:text-white/80 transition-colors"
+                        disabled={isSubmitting}
+                        className="px-4 py-2 text-sm border border-white/15 rounded-lg text-white/50 hover:bg-white/8 hover:text-white/80 transition-colors disabled:opacity-50"
                     >
                         Cancelar
                     </button>
                 )}
                 <button
                     type="submit"
-                    className="px-5 py-2 text-sm bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 active:scale-95 transition-all"
+                    disabled={isSubmitting}
+                    className="px-5 py-2 text-sm bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 active:scale-95 transition-all disabled:opacity-60 disabled:active:scale-100"
                 >
-                    Enviar report
+                    {isSubmitting ? "Enviando..." : "Enviar report"}
                 </button>
             </div>
         </form>

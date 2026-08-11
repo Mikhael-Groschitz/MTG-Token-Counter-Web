@@ -23,6 +23,7 @@ export interface CardNavProps {
     baseColor?: string;
     buttonBgColor?: string;
     buttonTextColor?: string;
+    logoHref?: string;
 }
 
 const CardNav: React.FC<CardNavProps> = ({
@@ -30,7 +31,8 @@ const CardNav: React.FC<CardNavProps> = ({
                                              className = '',
                                              baseColor = '#1f2937',
                                              buttonBgColor = '#9333ea',
-                                             buttonTextColor = '#fff'
+                                             buttonTextColor = '#fff',
+                                             logoHref = '/'
                                          }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const navRef = useRef<HTMLDivElement>(null);
@@ -102,13 +104,13 @@ const CardNav: React.FC<CardNavProps> = ({
                         <span className={`w-6 h-[2px] bg-white transition-transform origin-center duration-300 ${isExpanded ? '-rotate-45 -translate-y-[7px]' : ''}`} />
                     </button>
 
-                    <Link to="/" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 text-white font-bold text-xl">
+                    <Link to={logoHref} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 text-white font-bold text-xl">
                         <img src="/logo.svg" alt="Logo TokenForge" className="w-16 h-16" />
                         <span>TokenForge</span>
                     </Link>
 
                     <Link
-                        to="/login"
+                        to="/entrar"
                         className="hidden md:flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-transform hover:scale-105"
                         style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
                     >

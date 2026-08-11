@@ -2,7 +2,7 @@ import axios from 'axios';
 import { USER_KEY } from './authService';
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
+    baseURL: import.meta.env.VITE_API_URL || 'https://mtg-token-counter-backend.onrender.com',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -28,7 +28,7 @@ api.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             localStorage.removeItem(USER_KEY);
-            window.location.href = '/login';
+            window.location.href = '/entrar';
         }
         return Promise.reject(error);
     }

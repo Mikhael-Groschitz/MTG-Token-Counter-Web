@@ -1,15 +1,18 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
+import FacebookLogin from '@greatsumini/react-facebook-login';
+import { FaFacebook } from 'react-icons/fa';
 import { motion } from 'motion/react';
 import { Mail, Lock, User, ArrowRight, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 const MIN_PASSWORD_LENGTH = 8;
+const FACEBOOK_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID as string | undefined;
 
 export const RegisterPage = () => {
     const navigate = useNavigate();
-    const { register, loginWithGoogle } = useAuth();
+    const { register, loginWithGoogle, loginWithFacebook } = useAuth();
 
     const [formData, setFormData] = useState({
         username: '',
@@ -49,7 +52,7 @@ export const RegisterPage = () => {
                 email: formData.email,
                 password: formData.password,
             });
-            navigate('/verify-email', { state: { email: formData.email } });
+            navigate('/verificar-email', { state: { email: formData.email } });
         } catch (err: any) {
             setError(err.response?.data?.message || 'Erro ao criar conta. Tente novamente.');
         } finally {
@@ -88,7 +91,7 @@ export const RegisterPage = () => {
                                 setError(null);
                                 try {
                                     await loginWithGoogle(credentialResponse.credential);
-                                    navigate('/');
+                                    navigate('/jogar');
                                 } catch (err: any) {
                                     setError(err.response?.data?.message || 'Falha ao autenticar com o Google.');
                                 } finally {
@@ -105,7 +108,37 @@ export const RegisterPage = () => {
                         />
                     </div>
 
-
+                    {/* Facebook Login — usa accessToken */}
+                    {FACEBOOK_APP_ID && (
+                        <div className="mb-6">
+                            <FacebookLogin
+                                appId={FACEBOOK_APP_ID}
+                                onSuccess={async (response) => {
+                                    setIsLoading(true);
+                                    setError(null);
+                                    try {
+                                        await loginWithFacebook(response.accessToken);
+                                        navigate('/jogar');
+                                    } catch (err: any) {
+                                        setError(err.response?.data?.message || 'Falha ao autenticar com o Facebook.');
+                                    } finally {
+                                        setIsLoading(false);
+                                    }
+                                }}
+                                onFail={() => setError('Falha ao conectar com o Facebook. Tente novamente.')}
+                                render={({ onClick }) => (
+                                    <button
+                                        type="button"
+                                        onClick={onClick}
+                                        className="w-full flex items-center justify-center gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white font-semibold rounded-xl py-3 transition-colors"
+                                    >
+                                        <FaFacebook size={20} />
+                                        Continuar com Facebook
+                                    </button>
+                                )}
+                            />
+                        </div>
+                    )}
 
                     <div className="relative flex py-2 items-center mb-6">
                         <div className="flex-grow border-t border-gray-800" />
@@ -235,7 +268,7 @@ export const RegisterPage = () => {
 
                     <p className="text-center text-gray-500 text-sm mt-8">
                         Já tem uma conta?{' '}
-                        <Link to="/login" className="text-purple-400 hover:text-purple-300 font-bold transition-colors">
+                        <Link to="/entrar" className="text-purple-400 hover:text-purple-300 font-bold transition-colors">
                             Faça login
                         </Link>
                     </p>

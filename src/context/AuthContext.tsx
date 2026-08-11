@@ -9,6 +9,7 @@ interface AuthContextType {
     login: (credentials: LoginCredentials) => Promise<void>;
     register: (userData: RegisterData) => Promise<void>;
     loginWithGoogle: (token: string) => Promise<void>;
+    loginWithFacebook: (accessToken: string) => Promise<void>;
     logout: () => void;
 }
 
@@ -44,6 +45,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser({ username: data.username, email: data.email });
     };
 
+    const loginWithFacebook = async (accessToken: string) => {
+        const data = await authService.loginWithFacebook(accessToken);
+        setUser({ username: data.username, email: data.email });
+    };
+
     const logout = () => {
         authService.logout();
         setUser(null);
@@ -65,6 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             login,
             register,
             loginWithGoogle,
+            loginWithFacebook,
             logout,
         }}>
             {children}

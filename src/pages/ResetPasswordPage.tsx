@@ -1,24 +1,46 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, FormEvent } from 'react';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, ArrowLeft, Loader2, CheckCircle, Send, Lock, AlertCircle } from 'lucide-react';
+import { Lock, ArrowLeft, Loader2, CheckCircle, AlertCircle, KeyRound } from 'lucide-react';
 import { authService } from '@/services/authService';
 
-export const ForgotPasswordPage = () => {
+const MIN_PASSWORD_LENGTH = 8;
+
+export const ResetPasswordPage = () => {
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const token = searchParams.get('token');
+
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [email, setEmail] = useState("");
     const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+
+        if (!token) {
+            setError('Link de recuperação inválido. Solicite um novo e-mail de recuperação.');
+            return;
+        }
+        if (password.length < MIN_PASSWORD_LENGTH) {
+            setError(`A senha deve ter pelo menos ${MIN_PASSWORD_LENGTH} caracteres.`);
+            return;
+        }
+        if (password !== confirmPassword) {
+            setError('As senhas não coincidem.');
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
         try {
-            await authService.forgotPassword(email);
+            await authService.resetPassword(token, password);
             setIsSubmitted(true);
+            setTimeout(() => navigate('/entrar'), 2500);
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Erro ao enviar o e-mail de recuperação. Tente novamente.');
+            setError(err.response?.data?.message || 'Erro ao redefinir a senha. Solicite um novo link.');
         } finally {
             setIsLoading(false);
         }
@@ -26,7 +48,6 @@ export const ForgotPasswordPage = () => {
 
     return (
         <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden rounded-3xl">
-
             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px]" />
 
@@ -48,33 +69,51 @@ export const ForgotPasswordPage = () => {
                                 transition={{ duration: 0.3 }}
                             >
                                 <div className="text-center mb-8">
-                                    {/* Ícone Estilizado */}
                                     <div className="w-20 h-20 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-purple-500/20 shadow-inner">
-                                        <Lock className="w-10 h-10 text-purple-400" />
+                                        <KeyRound className="w-10 h-10 text-purple-400" />
                                     </div>
 
                                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400 tracking-tight">
-                                        Esqueceu a senha?
+                                        Nova senha
                                     </h1>
                                     <p className="text-gray-400 text-sm mt-2 leading-relaxed">
-                                        Não se preocupe. Digite seu email e enviaremos as instruções de recuperação.
+                                        Escolha uma nova senha para sua conta.
                                     </p>
                                 </div>
 
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Email Cadastrado</label>
+                                        <label htmlFor="new-password" className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Nova Senha</label>
                                         <div className="relative group">
                                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-400 transition-colors">
-                                                <Mail size={18} />
+                                                <Lock size={18} />
                                             </div>
                                             <input
-                                                type="email"
+                                                id="new-password"
+                                                type="password"
                                                 required
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
+                                                value={password}
+                                                onChange={(e) => { setPassword(e.target.value); setError(null); }}
                                                 className="w-full bg-gray-950/40 border border-gray-800 text-gray-100 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-gray-700 shadow-inner"
-                                                placeholder="seu@email.com"
+                                                placeholder="Mín. 8 caracteres"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label htmlFor="confirm-password" className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Confirmar Senha</label>
+                                        <div className="relative group">
+                                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-400 transition-colors">
+                                                <Lock size={18} />
+                                            </div>
+                                            <input
+                                                id="confirm-password"
+                                                type="password"
+                                                required
+                                                value={confirmPassword}
+                                                onChange={(e) => { setConfirmPassword(e.target.value); setError(null); }}
+                                                className="w-full bg-gray-950/40 border border-gray-800 text-gray-100 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-gray-700 shadow-inner"
+                                                placeholder="••••••••"
                                             />
                                         </div>
                                     </div>
@@ -94,9 +133,7 @@ export const ForgotPasswordPage = () => {
                                         {isLoading ? (
                                             <Loader2 className="animate-spin" size={22} />
                                         ) : (
-                                            <>
-                                                Enviar Link <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform" />
-                                            </>
+                                            'Redefinir Senha'
                                         )}
                                     </button>
                                 </form>
@@ -112,16 +149,10 @@ export const ForgotPasswordPage = () => {
                                 <div className="w-24 h-24 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-green-500/20 shadow-[0_0_20px_rgba(34,197,94,0.1)]">
                                     <CheckCircle className="w-12 h-12 text-green-400" />
                                 </div>
-                                <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">Email Enviado!</h2>
-                                <p className="text-gray-400 text-sm mb-10 leading-relaxed px-4">
-                                    Enviamos um link de recuperação para <br/>
-                                    <span className="text-white font-bold">{email}</span>
+                                <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">Senha redefinida!</h2>
+                                <p className="text-gray-400 text-sm mb-2 leading-relaxed px-4">
+                                    Redirecionando para o login...
                                 </p>
-                                <div className="bg-gray-950/30 rounded-xl p-4 border border-white/5">
-                                    <p className="text-gray-500 text-xs italic">
-                                        Não recebeu? Verifique sua caixa de spam ou lixo eletrônico.
-                                    </p>
-                                </div>
                             </motion.div>
                         )}
                     </AnimatePresence>

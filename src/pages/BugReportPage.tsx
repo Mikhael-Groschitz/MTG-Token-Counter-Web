@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import BugReportForm from '../components/ui/BugReportForm.tsx';
+import { bugReportService } from '../services/bugReportService';
 
 export function ReportPage() {
     const navigate = useNavigate();
@@ -7,10 +8,7 @@ export function ReportPage() {
     return (
         <div className="min-h-screen flex items-start justify-center px-4 py-10">
             <BugReportForm
-                onSubmit={(data) => {
-                    console.log('Bug report enviado:', data);
-                    // Aqui  pode chamar a API, ex: await api.post('/bugs', data)
-                }}
+                onSubmit={(data) => bugReportService.submit(data)}
                 onCancel={() => navigate(-1)}
             />
         </div>

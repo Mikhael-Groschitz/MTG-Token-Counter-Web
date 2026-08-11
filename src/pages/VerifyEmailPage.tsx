@@ -19,7 +19,7 @@ export const VerifyEmailPage = () => {
     const [resendSuccess, setResendSuccess] = useState(false);
 
     useEffect(() => {
-        if (!email) navigate('/register');
+        if (!email) navigate('/cadastro');
     }, [email, navigate]);
 
     useEffect(() => {
@@ -36,7 +36,7 @@ export const VerifyEmailPage = () => {
         setError(null);
         try {
             await authService.verifyEmail(email, code);
-            navigate('/login', {
+            navigate('/entrar', {
                 state: { verified: true, message: 'Email verificado! Faça login para continuar.' }
             });
         } catch (err: any) {
@@ -55,7 +55,7 @@ export const VerifyEmailPage = () => {
         setResendSuccess(false);
         setError(null);
         try {
-            await authService.forgotPassword(email);
+            await authService.resendVerificationCode(email);
             setResendSuccess(true);
             setCooldown(RESEND_COOLDOWN);
         } catch (err: any) {
