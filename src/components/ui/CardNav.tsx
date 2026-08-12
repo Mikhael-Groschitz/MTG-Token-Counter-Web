@@ -32,7 +32,7 @@ const CardNav: React.FC<CardNavProps> = ({
                                              baseColor = '#1f2937',
                                              buttonBgColor = '#9333ea',
                                              buttonTextColor = '#fff',
-                                             logoHref = '/'
+                                             logoHref = '/jogar'
                                          }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const navRef = useRef<HTMLDivElement>(null);
@@ -106,7 +106,7 @@ const CardNav: React.FC<CardNavProps> = ({
 
                     <Link to={logoHref} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 text-white font-bold text-xl">
                         <img src="/logo.svg" alt="Logo TokenForge" className="w-16 h-16" />
-                        <span>TokenForge</span>
+                        <span>Token Forge</span>
                     </Link>
 
                     <Link

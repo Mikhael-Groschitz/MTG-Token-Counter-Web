@@ -1,16 +1,29 @@
-export type TokenColor = 'white' | 'blue' | 'black' | 'red' | 'green' | 'gold' | 'colorless';
-export type TokenLayout = 'classic' | 'fullArt'; 
+export type TokenColor = 'white' | 'blue' | 'black' | 'red' | 'green' | 'colorless' | 'multicolored';
+export type TokenLayout = 'classic' | 'fullArt';
+
+export type MulticolorIdentity =
+    // 2-color guilds
+    | 'azorius' | 'dimir' | 'rakdos' | 'gruul' | 'selesnya'
+    | 'orzhov' | 'izzet' | 'golgari' | 'boros' | 'simic'
+    // 3-color shards & wedges
+    | 'esper' | 'grixis' | 'jund' | 'naya' | 'bant'
+    | 'abzan' | 'jeskai' | 'sultai' | 'mardu' | 'temur'
+    // 4-color nephilim
+    | 'yoreTiller' | 'glintEye' | 'duneBrood' | 'inkTreader' | 'witchMaw'
+    // 5-color
+    | 'fiveColor';
 
 export interface TokenData {
     id: string;
     name: string;
-    imageUrl?: string; 
-    typeLine: string;  
+    imageUrl?: string;
+    typeLine: string;
     color: TokenColor;
-    power?: string;  
+    colorIdentity?: MulticolorIdentity;
+    power?: string;
     toughness?: string;
-    abilities?: string; 
-    count: number; 
+    abilities?: string;
+    count: number;
     layout?: TokenLayout;
 }
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { TokenData, TokenColor } from '@/types';
 import { Image as ImageIcon } from 'lucide-react';
+import { COLOR_IDENTITY_MAP, buildConicGradient } from '../constants/colorIdentities';
 
 interface TokenCardProps {
     data: TokenData;
@@ -9,28 +10,43 @@ interface TokenCardProps {
 
 // --- CONFIGURAÇÃO DE ESTILOS ---
 
-const frameColors: Record<TokenColor, string> = {
+const frameColors: Record<Exclude<TokenColor, 'multicolored'>, string> = {
     white: 'bg-[#F8F6D8] border-[#E0DBC5]',
     blue: 'bg-[#C1D7E9] border-[#1D6F93]',
     black: 'bg-[#746C69] border-[#2B2625]',
     red: 'bg-[#E49977] border-[#A83D2A]',
     green: 'bg-[#9DCC9B] border-[#1F6636]',
-    gold: 'bg-[#EBCF6E] border-[#D4B542]',
     colorless: 'bg-[#D6D9DD] border-[#9EA2A7]',
 };
+
+const MULTICOLOR_FALLBACK_CLASS = 'bg-[#EBCF6E] border-[#D4B542]';
+
+function getFrameStyle(data: Pick<TokenData, 'color' | 'colorIdentity'>): { className: string; style?: React.CSSProperties } {
+    if (data.color === 'multicolored') {
+        const identity = data.colorIdentity ? COLOR_IDENTITY_MAP[data.colorIdentity] : undefined;
+        if (!identity) {
+            return { className: MULTICOLOR_FALLBACK_CLASS };
+        }
+        return {
+            className: 'border-[#8a7a52]',
+            style: { background: buildConicGradient(identity.colors) },
+        };
+    }
+    return { className: frameColors[data.color] ?? frameColors.colorless };
+}
 
 const textBoxBase = "border-[1px] border-[#8f9193] shadow-inner z-20 relative text-black transition-all duration-300";
 
 export const TokenCard: React.FC<TokenCardProps> = ({ data, className = '' }) => {
     const isFullArt = data.layout === 'fullArt';
-    const frameStyle = frameColors[data.color] || frameColors.colorless;
+    const { className: frameClassName, style: frameStyle } = getFrameStyle(data);
 
     const barBackground = isFullArt ? "bg-[#EAECEE]/80 backdrop-blur-md" : "bg-[#EAECEE]";
 
     return (
         <div className={`w-[280px] aspect-[2.5/3.5] rounded-[14px] bg-black p-[10px] shadow-2xl relative group transition-transform hover:scale-[1.02] ${className}`}>
 
-            <div className={`w-full h-full ${frameStyle} rounded-[6px] p-[3px] flex flex-col gap-[3px] relative overflow-hidden transition-colors duration-300`}>
+            <div className={`w-full h-full ${frameClassName} rounded-[6px] p-[3px] flex flex-col gap-[3px] relative overflow-hidden transition-colors duration-300`} style={frameStyle}>
 
                 {isFullArt && data.imageUrl && (
                     <div className="absolute inset-0 z-0">

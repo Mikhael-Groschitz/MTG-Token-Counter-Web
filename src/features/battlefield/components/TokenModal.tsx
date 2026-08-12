@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Save, Wand2, Upload, Image as ImageIcon, LayoutList, Maximize, Link as LinkIcon, AlertCircle } from 'lucide-react';
-import { TokenData } from '@/types';
+import { TokenData, TokenColor } from '@/types';
 import { tokenService } from '@/services/tokenService';
+import { COLOR_IDENTITIES, TIER_LABELS, buildConicGradient, IdentityTier } from '../constants/colorIdentities';
 
 interface TokenModalProps {
     isOpen: boolean;
@@ -61,6 +62,14 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
+        if (name === 'color') {
+            setFormData(prev => ({
+                ...prev,
+                color: value as TokenColor,
+                colorIdentity: value === 'multicolored' ? prev.colorIdentity : undefined,
+            }));
+            return;
+        }
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
@@ -270,10 +279,42 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
                                             <option value="black">Preto (B)</option>
                                             <option value="red">Vermelho (R)</option>
                                             <option value="green">Verde (G)</option>
-                                            <option value="gold">Multicolor/Ouro</option>
+                                            <option value="multicolored">Multicolor</option>
                                             <option value="colorless">Incolor</option>
                                         </select>
                                     </div>
+
+                                    {formData.color === 'multicolored' && (
+                                        <div className="col-span-2 space-y-3 bg-gray-950/50 border border-gray-800 rounded-xl p-3">
+                                            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-tighter">Identidade de Cor</label>
+                                            {([2, 3, 4, 5] as IdentityTier[]).map(tier => (
+                                                <div key={tier}>
+                                                    <p className="text-[10px] text-gray-500 mb-1.5 uppercase tracking-widest">{TIER_LABELS[tier]}</p>
+                                                    <div className="grid grid-cols-5 gap-2">
+                                                        {COLOR_IDENTITIES.filter(ci => ci.tier === tier).map(ci => (
+                                                            <button
+                                                                key={ci.id}
+                                                                type="button"
+                                                                onClick={() => setFormData(p => ({ ...p, colorIdentity: ci.id }))}
+                                                                title={ci.name}
+                                                                className={`flex flex-col items-center gap-1 p-1.5 rounded-lg border-2 transition-all ${
+                                                                    formData.colorIdentity === ci.id
+                                                                        ? 'border-purple-500 bg-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.2)]'
+                                                                        : 'border-gray-800 hover:border-gray-700'
+                                                                }`}
+                                                            >
+                                                                <span
+                                                                    className="w-6 h-6 rounded-full border border-black/30 shrink-0"
+                                                                    style={{ background: buildConicGradient(ci.colors) }}
+                                                                />
+                                                                <span className="text-[9px] leading-tight text-center text-gray-300 truncate w-full">{ci.name}</span>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className={formData.layout === 'fullArt' ? 'opacity-30 pointer-events-none' : ''}>

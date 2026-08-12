@@ -12,6 +12,9 @@ if (!clientId) {
     console.warn("⚠️ AVISO: VITE_GOOGLE_CLIENT_ID não foi encontrado no arquivo .env. O login com Google não funcionará.");
 }
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'https://mtg-token-counter-backend.onrender.com').trim();
+fetch(API_BASE_URL, { mode: 'no-cors' }).catch(() => {});
+
 inject();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

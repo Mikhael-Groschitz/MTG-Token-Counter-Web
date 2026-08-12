@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import CardNav, { CardNavItem } from './ui/CardNav';
 import { useAuth } from '@/context/AuthContext';
 
@@ -9,6 +9,8 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
     const { isAuthenticated, logout } = useAuth();
+    const { pathname } = useLocation();
+    const isLanding = pathname === '/';
 
     const navItems: CardNavItem[] = [
         {
@@ -54,20 +56,22 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     return (
         <div className="min-h-screen flex flex-col bg-gray-950 text-gray-100 font-sans selection:bg-purple-500 selection:text-white">
 
-            <CardNav
-                items={navItems}
-                baseColor="#111827"
-                logoHref={isAuthenticated ? '/jogar' : '/'}
-            />
+            {!isLanding && (
+                <CardNav
+                    items={navItems}
+                    baseColor="#111827"
+                    logoHref={'/jogar'}
+                />
+            )}
 
-            <main className="flex-grow max-w-7xl mx-auto px-4 pt-24 pb-8 w-full">
+            <main className={isLanding ? 'flex-grow w-full' : 'flex-grow max-w-7xl mx-auto px-4 pt-24 pb-8 w-full'}>
                 {children}
             </main>
 
             <footer className="w-full py-8 mt-auto border-t border-gray-900 bg-gray-950/50">
                 <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-3 text-center">
                     <p className="text-sm text-gray-500 font-medium tracking-wide">
-                        © {new Date().getFullYear()} Arg
+                        © {new Date().getFullYear()} Token Forge
                     </p>
                     <nav className="flex items-center gap-4 text-xs text-gray-500">
                         <Link to="/politica-de-privacidade" className="hover:text-purple-400 transition-colors">Política de Privacidade</Link>
@@ -75,7 +79,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                         <Link to="/termos-de-uso" className="hover:text-purple-400 transition-colors">Termos de Uso</Link>
                     </nav>
                     <p className="text-[10px] text-gray-600 max-w-2xl leading-relaxed uppercase tracking-tighter italic">
-                        TokenForge é um conteúdo de fã não oficial permitido pela Política de Conteúdo de Fãs da Wizards of the Coast.
+                        Token Forge é um conteúdo de fã não oficial permitido pela Política de Conteúdo de Fãs da Wizards of the Coast.
                         Este projeto não é aprovado ou endossado pela Wizards. Magic: The Gathering e suas marcas são propriedade da Wizards of the Coast LLC.
                     </p>
                 </div>

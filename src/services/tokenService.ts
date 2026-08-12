@@ -7,6 +7,7 @@ export interface TokenResponse {
     name: string;
     type_line: string;
     color: string;
+    color_identity?: string | null;
     power?: string;
     toughness?: string;
     abilities?: string;
@@ -19,6 +20,7 @@ export const mapToTokenData = (t: TokenResponse): TokenData => ({
     name: t.name,
     typeLine: t.type_line,
     color: t.color as TokenData['color'],
+    colorIdentity: (t.color_identity ?? undefined) as TokenData['colorIdentity'],
     power: t.power,
     toughness: t.toughness,
     abilities: t.abilities,
@@ -31,6 +33,7 @@ const mapToPayload = (token: Omit<TokenData, 'id' | 'count'>): Omit<TokenRespons
     name: token.name,
     type_line: token.typeLine,
     color: token.color,
+    color_identity: token.colorIdentity ?? null,
     power: token.power,
     toughness: token.toughness,
     abilities: token.abilities,

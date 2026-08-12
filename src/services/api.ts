@@ -3,6 +3,7 @@ import { USER_KEY } from './authService';
 
 const api = axios.create({
     baseURL: (import.meta.env.VITE_API_URL || 'https://mtg-token-counter-backend.onrender.com').trim(),
+    timeout: 30000,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -30,6 +31,15 @@ api.interceptors.response.use(
             localStorage.removeItem(USER_KEY);
             window.location.href = '/entrar';
         }
+
+        if (!error.response) {
+            error.response = {
+                data: {
+                    message: 'O servidor pode estar iniciando. Tente novamente em alguns instantes.',
+                },
+            };
+        }
+
         return Promise.reject(error);
     }
 );
