@@ -256,6 +256,8 @@ export const DashboardPage = () => {
                 onClose={() => { setIsModalOpen(false); setEditingToken(null); }}
                 onSave={handleSaveToken}
                 initialData={editingToken}
+                forceLibrarySave
+                libraryTokenCount={libraryTokens.length}
             />
         </div>
     );

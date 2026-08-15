@@ -23,8 +23,11 @@ export const bugReportService = {
         formData.append('version', payload.version);
         payload.files.forEach((file) => formData.append('files', file));
 
-        // Não define Content-Type manualmente: o axios detecta o FormData e
-        // deixa o navegador definir o header com o boundary correto.
-        await api.post('/bugs', formData);
+        // Remove o Content-Type padrão (application/json) da instância do axios:
+        // caso contrário o axios serializa o FormData como JSON em vez de enviar
+        // multipart/form-data com o boundary correto.
+        await api.post('/bugs', formData, {
+            headers: { 'Content-Type': undefined },
+        });
     },
 };

@@ -219,6 +219,7 @@ export const GamePage = () => {
                 onClose={() => { setIsCreateModalOpen(false); setEditingToken(null); }}
                 onSave={handleSaveToken}
                 initialData={editingToken}
+                libraryTokenCount={libraryTokens.length}
             />
         </div>
     );

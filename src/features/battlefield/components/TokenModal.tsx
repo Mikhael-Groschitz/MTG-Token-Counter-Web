@@ -1,15 +1,22 @@
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Save, Wand2, Upload, Image as ImageIcon, LayoutList, Maximize, Link as LinkIcon, AlertCircle } from 'lucide-react';
+import { X, Save, Wand2, Upload, Image as ImageIcon, LayoutList, Maximize, Link as LinkIcon, AlertCircle, Library } from 'lucide-react';
 import { TokenData, TokenColor } from '@/types';
 import { tokenService } from '@/services/tokenService';
+import { useAuth } from '@/context/AuthContext';
 import { COLOR_IDENTITIES, TIER_LABELS, buildConicGradient, IdentityTier } from '../constants/colorIdentities';
+
+const MAX_LIBRARY_TOKENS = 5;
 
 interface TokenModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: (token: TokenData) => void;
     initialData?: TokenData | null;
+    /** Dashboard/biblioteca: sempre persiste no backend, sem exibir o toggle. */
+    forceLibrarySave?: boolean;
+    /** Quantidade atual de tokens na biblioteca do usuário, para bloquear o toggle no limite. */
+    libraryTokenCount?: number;
 }
 
 const EMPTY_FORM: TokenData = {
@@ -25,9 +32,13 @@ const EMPTY_FORM: TokenData = {
     layout: 'classic',
 };
 
-export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalProps) => {
+export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibrarySave = false, libraryTokenCount = 0 }: TokenModalProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const isEditing = !!initialData;
+    const { isAuthenticated } = useAuth();
+
+    const showLibraryToggle = isAuthenticated && !forceLibrarySave;
+    const libraryLimitReached = libraryTokenCount >= MAX_LIBRARY_TOKENS;
 
     const [baseType, setBaseType] = useState('Creature');
     const [subType, setSubType] = useState('');
@@ -35,10 +46,12 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<TokenData>(EMPTY_FORM);
+    const [saveToLibrary, setSaveToLibrary] = useState(false);
 
     useEffect(() => {
         if (!isOpen) return;
         setError(null);
+        setSaveToLibrary(false);
         if (initialData) {
             setFormData(initialData);
             const parts = initialData.typeLine.replace('Token ', '').split(' — ');
@@ -98,14 +111,24 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
         setError(null);
 
         const { id, count, ...payload } = formData;
+        const isEditingLocalToken = isEditing && !!initialData?.id?.startsWith('local_');
+        const shouldPersistToBackend = forceLibrarySave || (isAuthenticated && saveToLibrary);
 
         try {
             let saved: TokenData;
-            if (isEditing && initialData?.id) {
-                saved = await tokenService.update(initialData.id, payload);
-                saved = { ...saved, count: initialData.count };
+            if (shouldPersistToBackend) {
+                if (isEditing && initialData?.id && !isEditingLocalToken) {
+                    saved = await tokenService.update(initialData.id, payload);
+                    saved = { ...saved, count: initialData.count };
+                } else {
+                    saved = await tokenService.create(payload);
+                }
             } else {
-                saved = await tokenService.create(payload);
+                saved = {
+                    ...payload,
+                    id: isEditingLocalToken ? initialData!.id : `local_${Date.now()}`,
+                    count: initialData?.count ?? 1,
+                } as TokenData;
             }
             onSave(saved);
             onClose();
@@ -342,6 +365,30 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData }: TokenModalP
                                     </div>
                                 </div>
                             </div>
+
+                            {showLibraryToggle && (
+                                <label
+                                    className={`mt-5 flex items-start gap-3 p-3 rounded-xl border transition-colors ${
+                                        libraryLimitReached
+                                            ? 'border-gray-800 opacity-60 cursor-not-allowed'
+                                            : 'border-gray-800 hover:border-purple-500/40 cursor-pointer'
+                                    }`}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={saveToLibrary}
+                                        disabled={libraryLimitReached}
+                                        onChange={e => setSaveToLibrary(e.target.checked)}
+                                        className="mt-0.5 accent-purple-500 w-4 h-4"
+                                    />
+                                    <span className="text-sm text-gray-300 flex items-center gap-2">
+                                        <Library size={16} className="text-purple-400 shrink-0" />
+                                        {libraryLimitReached
+                                            ? `Limite de ${MAX_LIBRARY_TOKENS} tokens na biblioteca atingido. Remova um token no Dashboard para salvar outro.`
+                                            : 'Também salvar este token na minha biblioteca'}
+                                    </span>
+                                </label>
+                            )}
 
                             {error && (
                                 <div className="mt-4 flex items-center gap-2 text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm">

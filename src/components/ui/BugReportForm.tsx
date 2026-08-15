@@ -45,7 +45,7 @@ const MODULES: string[] = [
     "Outro",
 ];
 
-const ENVIRONMENTS: string[] = ["Produção", "Staging", "Desenvolvimento"];
+const ENVIRONMENTS: string[] = ["Produção"];
 
 const severityStyles: Record<Severity, SeverityStyle> = {
     low: {
