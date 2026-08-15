@@ -24,6 +24,8 @@ export interface CardNavProps {
     buttonBgColor?: string;
     buttonTextColor?: string;
     logoHref?: string;
+    isAuthenticated?: boolean;
+    onLogout?: () => void;
 }
 
 const CardNav: React.FC<CardNavProps> = ({
@@ -32,7 +34,9 @@ const CardNav: React.FC<CardNavProps> = ({
                                              baseColor = '#1f2937',
                                              buttonBgColor = '#9333ea',
                                              buttonTextColor = '#fff',
-                                             logoHref = '/jogar'
+                                             logoHref = '/jogar',
+                                             isAuthenticated = false,
+                                             onLogout
                                          }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const navRef = useRef<HTMLDivElement>(null);
@@ -109,13 +113,24 @@ const CardNav: React.FC<CardNavProps> = ({
                         <span>Token Forge</span>
                     </Link>
 
-                    <Link
-                        to="/entrar"
-                        className="hidden md:flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-transform hover:scale-105"
-                        style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
-                    >
-                        Entrar na sua conta
-                    </Link>
+                    {isAuthenticated ? (
+                        <button
+                            type="button"
+                            onClick={onLogout}
+                            className="hidden md:flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-transform hover:scale-105"
+                            style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
+                        >
+                            Sair
+                        </button>
+                    ) : (
+                        <Link
+                            to="/entrar"
+                            className="hidden md:flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-transform hover:scale-105"
+                            style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
+                        >
+                            Entrar na sua conta
+                        </Link>
+                    )}
                 </div>
 
                 <div className="pt-[70px] pb-4 px-4 flex flex-col md:flex-row gap-4 items-stretch justify-center">

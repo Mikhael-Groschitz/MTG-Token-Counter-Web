@@ -61,6 +61,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     items={navItems}
                     baseColor="#111827"
                     logoHref={'/jogar'}
+                    isAuthenticated={isAuthenticated}
+                    onLogout={logout}
                 />
             )}
 
