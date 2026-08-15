@@ -82,8 +82,8 @@ export const RegisterPage = () => {
                         </p>
                     </div>
 
-                    {/* Google Login — usa credential (idToken) */}
-                    <div className="flex justify-center mb-6">
+                    {/* Login social — Google (credential/idToken) + Facebook (accessToken) */}
+                    <div className="flex items-center justify-center gap-3 mb-6">
                         <GoogleLogin
                             onSuccess={async (credentialResponse) => {
                                 if (!credentialResponse.credential) return;
@@ -106,11 +106,8 @@ export const RegisterPage = () => {
                             text="signin_with"
                             width="368"
                         />
-                    </div>
 
-                    {/* Facebook Login — usa accessToken */}
-                    {FACEBOOK_APP_ID && (
-                        <div className="mb-6">
+                        {FACEBOOK_APP_ID && (
                             <FacebookLogin
                                 appId={FACEBOOK_APP_ID}
                                 onSuccess={async (response) => {
@@ -130,15 +127,15 @@ export const RegisterPage = () => {
                                     <button
                                         type="button"
                                         onClick={onClick}
-                                        className="w-full flex items-center justify-center gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white font-semibold rounded-xl py-3 transition-colors"
+                                        aria-label="Continuar com Facebook"
+                                        className="h-10 w-10 flex items-center justify-center bg-[#1877F2] hover:bg-[#166FE5] text-white rounded-lg transition-colors"
                                     >
                                         <FaFacebook size={20} />
-                                        Continuar com Facebook
                                     </button>
                                 )}
                             />
-                        </div>
-                    )}
+                        )}
+                    </div>
 
                     <div className="relative flex py-2 items-center mb-6">
                         <div className="flex-grow border-t border-gray-800" />
