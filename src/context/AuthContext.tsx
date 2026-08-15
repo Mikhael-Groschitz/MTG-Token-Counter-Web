@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authService, USER_KEY } from '../services/authService';
-import { LoginCredentials, RegisterData, User } from '@/types';
+import { LoginCredentials, RegisterData, UpdateProfileData, User } from '@/types';
 
 interface AuthContextType {
     user: User | null;
@@ -10,6 +10,7 @@ interface AuthContextType {
     register: (userData: RegisterData) => Promise<void>;
     loginWithGoogle: (token: string) => Promise<void>;
     loginWithFacebook: (accessToken: string) => Promise<void>;
+    updateProfile: (payload: UpdateProfileData) => Promise<void>;
     logout: () => void;
 }
 
@@ -33,7 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async (credentials: LoginCredentials) => {
         const data = await authService.login(credentials);
-        setUser({ username: data.username, email: data.email });
+        setUser({ username: data.username, email: data.email, provider: data.provider });
     };
 
     const register = async (userData: RegisterData) => {
@@ -42,12 +43,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const loginWithGoogle = async (googleToken: string) => {
         const data = await authService.loginWithGoogle(googleToken);
-        setUser({ username: data.username, email: data.email });
+        setUser({ username: data.username, email: data.email, provider: data.provider });
     };
 
     const loginWithFacebook = async (accessToken: string) => {
         const data = await authService.loginWithFacebook(accessToken);
-        setUser({ username: data.username, email: data.email });
+        setUser({ username: data.username, email: data.email, provider: data.provider });
+    };
+
+    const updateProfile = async (payload: UpdateProfileData) => {
+        const data = await authService.updateProfile(payload);
+        setUser({ username: data.username, email: data.email, provider: data.provider });
     };
 
     const logout = () => {
@@ -72,6 +78,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             register,
             loginWithGoogle,
             loginWithFacebook,
+            updateProfile,
             logout,
         }}>
             {children}

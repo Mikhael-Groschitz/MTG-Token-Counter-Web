@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Plus, Settings, LayoutGrid, Trash2, Edit, User, LogOut, Loader2, AlertCircle } from 'lucide-react';
+import { Plus, Settings, LayoutGrid, Trash2, Edit, User, LogOut, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import { TokenCard } from '@/features/battlefield/components/TokenCard';
 import { TokenModal } from '@/features/battlefield/components/TokenModal';
 import { TokenData } from '@/types';
@@ -10,7 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 const MAX_TOKENS = 5;
 
 export const DashboardPage = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, updateProfile } = useAuth();
     const { tokens: libraryTokens, loading, isMutating, error, hasReachedLimit, fetchTokens, deleteToken } = useTokens();
 
     const [activeTab, setActiveTab] = useState<'tokens' | 'settings'>('tokens');
@@ -19,9 +19,12 @@ export const DashboardPage = () => {
     const [deleteError, setDeleteError] = useState<string | null>(null);
 
     const [username, setUsername] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [settingsError, setSettingsError] = useState<string | null>(null);
+    const [settingsSuccess, setSettingsSuccess] = useState(false);
+    const [isSavingSettings, setIsSavingSettings] = useState(false);
 
     useEffect(() => { void fetchTokens(); }, [fetchTokens]);
     useEffect(() => { if (user?.username) setUsername(user.username); }, [user]);
@@ -45,14 +48,32 @@ export const DashboardPage = () => {
         }
     };
 
-    const handleSaveSettings = (e: React.FormEvent) => {
+    const handleSaveSettings = async (e: React.FormEvent) => {
         e.preventDefault();
         setSettingsError(null);
+        setSettingsSuccess(false);
+
         if (newPassword && newPassword !== confirmPassword) {
             setSettingsError('As senhas não coincidem.');
             return;
         }
-        // TODO: chamar api de atualização de perfil
+
+        setIsSavingSettings(true);
+        try {
+            await updateProfile({
+                username,
+                currentPassword: newPassword ? currentPassword : undefined,
+                newPassword: newPassword || undefined,
+            });
+            setNewPassword('');
+            setConfirmPassword('');
+            setCurrentPassword('');
+            setSettingsSuccess(true);
+        } catch (err: any) {
+            setSettingsError(err.response?.data?.message || 'Erro ao salvar as alterações.');
+        } finally {
+            setIsSavingSettings(false);
+        }
     };
 
     return (
@@ -186,31 +207,43 @@ export const DashboardPage = () => {
                                 </div>
                             </div>
 
-                            <div className="space-y-4 pt-4">
-                                <h3 className="text-lg font-semibold text-white border-l-4 border-purple-500 pl-3">Segurança</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {user?.provider === 'local' && (
+                                <div className="space-y-4 pt-4">
+                                    <h3 className="text-lg font-semibold text-white border-l-4 border-purple-500 pl-3">Segurança</h3>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium text-gray-400">Nova Senha</label>
-                                        <input type="password" placeholder="••••••••" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
+                                        <label className="text-sm font-medium text-gray-400">Senha Atual</label>
+                                        <input type="password" placeholder="••••••••" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-gray-400">Confirmar Senha</label>
-                                        <input type="password" placeholder="••••••••" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-gray-400">Nova Senha</label>
+                                            <input type="password" placeholder="••••••••" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-gray-400">Confirmar Senha</label>
+                                            <input type="password" placeholder="••••••••" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
+                                        </div>
                                     </div>
                                 </div>
-                                {settingsError && (
-                                    <div className="flex items-center gap-2 text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm">
-                                        <AlertCircle size={16} className="shrink-0" /> {settingsError}
-                                    </div>
-                                )}
-                            </div>
+                            )}
+
+                            {settingsError && (
+                                <div className="flex items-center gap-2 text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm">
+                                    <AlertCircle size={16} className="shrink-0" /> {settingsError}
+                                </div>
+                            )}
+                            {settingsSuccess && (
+                                <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 text-sm">
+                                    <CheckCircle size={16} className="shrink-0" /> Perfil atualizado com sucesso.
+                                </div>
+                            )}
 
                             <div className="flex justify-between items-center pt-8 border-t border-gray-800">
                                 <button type="button" onClick={logout} className="text-red-400 hover:text-red-300 text-sm font-medium flex items-center gap-2 px-4 py-2 hover:bg-red-500/10 rounded-lg transition-colors">
                                     <LogOut size={16} /> Sair da Conta
                                 </button>
-                                <button type="submit" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-purple-900/20 transition-all hover:scale-105">
-                                    Salvar Alterações
+                                <button type="submit" disabled={isSavingSettings} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-purple-900/20 transition-all hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2">
+                                    {isSavingSettings ? <Loader2 className="animate-spin" size={18} /> : 'Salvar Alterações'}
                                 </button>
                             </div>
                         </form>

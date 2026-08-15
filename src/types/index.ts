@@ -27,17 +27,21 @@ export interface TokenData {
     layout?: TokenLayout;
 }
 
+export type AuthProvider = 'local' | 'google' | 'facebook';
+
 export interface User {
     id?: string;
     username: string;
     email: string;
     avatarUrl?: string;
+    provider?: AuthProvider;
 }
 
 export interface AuthResponse {
     token: string;
     username: string;
     email: string;
+    provider: AuthProvider;
 }
 
 export interface LoginCredentials {
@@ -49,4 +53,10 @@ export interface RegisterData {
     username: string;
     email: string;
     password: string;
+}
+
+export interface UpdateProfileData {
+    username: string;
+    currentPassword?: string;
+    newPassword?: string;
 }

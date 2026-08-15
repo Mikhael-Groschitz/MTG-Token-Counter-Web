@@ -1,5 +1,5 @@
 import api from './api';
-import { LoginCredentials, RegisterData, AuthResponse } from '@/types';
+import { LoginCredentials, RegisterData, AuthResponse, UpdateProfileData } from '@/types';
 
 export const USER_KEY = 'tokenforge_user';
 
@@ -12,7 +12,6 @@ export const authService = {
 
     async register(userData: RegisterData): Promise<AuthResponse> {
         const { data } = await api.post<AuthResponse>('/auth/register', userData);
-        localStorage.setItem(USER_KEY, JSON.stringify(data));
         return data;
     },
 
@@ -42,6 +41,17 @@ export const authService = {
 
     async resetPassword(token: string, newPassword: string): Promise<void> {
         await api.post('/auth/reset-password', { token, new_password: newPassword });
+    },
+
+    async updateProfile(payload: UpdateProfileData): Promise<AuthResponse> {
+        const body: Record<string, string> = { username: payload.username };
+        if (payload.newPassword) {
+            body.current_password = payload.currentPassword ?? '';
+            body.new_password = payload.newPassword;
+        }
+        const { data } = await api.put<AuthResponse>('/auth/profile', body);
+        localStorage.setItem(USER_KEY, JSON.stringify(data));
+        return data;
     },
 
     logout(): void {

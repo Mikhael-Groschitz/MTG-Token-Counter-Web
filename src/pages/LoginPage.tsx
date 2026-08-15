@@ -26,6 +26,11 @@ export const LoginPage = () => {
             await login({ identifier, password });
             navigate('/jogar');
         } catch (err: any) {
+            const errors = err.response?.data?.errors;
+            if (errors?.code === 'EMAIL_NOT_VERIFIED') {
+                navigate('/verificar-email', { state: { email: errors.email } });
+                return;
+            }
             setError(err.response?.data?.message || 'Email/usuário ou senha incorretos.');
         } finally {
             setIsLoading(false);
