@@ -1,4 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 type Severity = "low" | "medium" | "high" | "critical";
 
@@ -23,6 +24,7 @@ interface FormState {
 }
 
 interface BugReportPayload extends FormState {
+    reporterEmail?: string;
     files: File[];
 }
 
@@ -76,10 +78,12 @@ const labelClass =
     "block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wide";
 
 export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps) {
+    const { isAuthenticated } = useAuth();
     const [submitted, setSubmitted] = useState<boolean>(false);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
     const [files, setFiles] = useState<File[]>([]);
+    const [reporterEmail, setReporterEmail] = useState<string>("");
     const [form, setForm] = useState<FormState>({
         title: "",
         module: "",
@@ -113,7 +117,11 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
         setSubmitError(null);
         setIsSubmitting(true);
         try {
-            await onSubmit?.({ ...form, files });
+            await onSubmit?.({
+                ...form,
+                files,
+                reporterEmail: !isAuthenticated ? reporterEmail : undefined,
+            });
             setSubmitted(true);
         } catch (err: any) {
             setSubmitError(
@@ -211,6 +219,27 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                     })}
                 </div>
             </div>
+
+            {!isAuthenticated && (
+                <div>
+                    <label htmlFor="reporterEmail" className={labelClass}>
+                        Seu e-mail <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                        id="reporterEmail"
+                        type="email"
+                        name="reporterEmail"
+                        value={reporterEmail}
+                        onChange={(e) => setReporterEmail(e.target.value)}
+                        required
+                        placeholder="voce@exemplo.com"
+                        className={inputClass}
+                    />
+                    <p className="text-xs text-white/30 mt-1">
+                        Usamos para te responder sobre o andamento do report.
+                    </p>
+                </div>
+            )}
 
             <div>
                 <label className={labelClass}>

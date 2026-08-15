@@ -8,6 +8,7 @@ export interface BugReportPayload {
     steps: string;
     environment: string;
     version: string;
+    reporterEmail?: string;
     files: File[];
 }
 
@@ -21,6 +22,9 @@ export const bugReportService = {
         formData.append('steps', payload.steps);
         formData.append('environment', payload.environment);
         formData.append('version', payload.version);
+        if (payload.reporterEmail) {
+            formData.append('reporterEmail', payload.reporterEmail);
+        }
         payload.files.forEach((file) => formData.append('files', file));
 
         // Remove o Content-Type padrão (application/json) da instância do axios:
