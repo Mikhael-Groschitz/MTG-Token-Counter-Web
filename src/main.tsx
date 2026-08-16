@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { HelmetProvider } from 'react-helmet-async';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './context/AuthContext';
 import { inject } from "@vercel/analytics"
@@ -19,11 +20,12 @@ inject();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-
-        <GoogleOAuthProvider clientId={clientId || ""}>
-            <AuthProvider> 
-            <App />
-            </AuthProvider>
-        </GoogleOAuthProvider>
+        <HelmetProvider>
+            <GoogleOAuthProvider clientId={clientId || ""}>
+                <AuthProvider>
+                    <App />
+                </AuthProvider>
+            </GoogleOAuthProvider>
+        </HelmetProvider>
     </React.StrictMode>,
 )

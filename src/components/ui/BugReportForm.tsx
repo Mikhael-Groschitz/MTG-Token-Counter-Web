@@ -165,10 +165,11 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
 
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className={labelClass}>
+                    <label htmlFor="bug-title" className={labelClass}>
                         Título <span className="text-red-400">*</span>
                     </label>
                     <input
+                        id="bug-title"
                         type="text"
                         name="title"
                         value={form.title}
@@ -179,8 +180,9 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                     />
                 </div>
                 <div>
-                    <label className={labelClass}>Módulo / Área</label>
+                    <label htmlFor="bug-module" className={labelClass}>Módulo / Área</label>
                     <select
+                        id="bug-module"
                         name="module"
                         value={form.module}
                         onChange={handleChange}
@@ -197,10 +199,10 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
             </div>
 
             <div>
-                <label className={labelClass}>
+                <span id="bug-severity-label" className={labelClass}>
                     Severidade <span className="text-red-400">*</span>
-                </label>
-                <div className="grid grid-cols-4 gap-2">
+                </span>
+                <div role="group" aria-labelledby="bug-severity-label" className="grid grid-cols-4 gap-2">
                     {SEVERITIES.map(({ value, label }) => {
                         const isActive = form.severity === value;
                         const styles = severityStyles[value];
@@ -242,10 +244,11 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
             )}
 
             <div>
-                <label className={labelClass}>
+                <label htmlFor="bug-description" className={labelClass}>
                     Descrição <span className="text-red-400">*</span>
                 </label>
                 <textarea
+                    id="bug-description"
                     name="description"
                     value={form.description}
                     onChange={handleChange}
@@ -257,8 +260,9 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
             </div>
 
             <div>
-                <label className={labelClass}>Passos para reproduzir</label>
+                <label htmlFor="bug-steps" className={labelClass}>Passos para reproduzir</label>
                 <textarea
+                    id="bug-steps"
                     name="steps"
                     value={form.steps}
                     onChange={handleChange}
@@ -270,8 +274,9 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
 
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className={labelClass}>Ambiente</label>
+                    <label htmlFor="bug-environment" className={labelClass}>Ambiente</label>
                     <select
+                        id="bug-environment"
                         name="environment"
                         value={form.environment}
                         onChange={handleChange}
@@ -286,8 +291,9 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                     </select>
                 </div>
                 <div>
-                    <label className={labelClass}>Versão do sistema</label>
+                    <label htmlFor="bug-version" className={labelClass}>Versão do sistema</label>
                     <input
+                        id="bug-version"
                         type="text"
                         name="version"
                         value={form.version}
@@ -299,7 +305,7 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
             </div>
 
             <div>
-                <label className={labelClass}>Anexos</label>
+                <span className={labelClass}>Anexos</span>
                 <label className="flex flex-col items-center justify-center w-full border border-dashed border-white/15 rounded-lg py-5 bg-white/5 cursor-pointer hover:border-white/30 hover:bg-white/8 transition-colors">
                     <UploadIcon className="w-5 h-5 text-white/30 mb-1" />
                     <span className="text-sm text-white/40">Clique para anexar ou arraste arquivos aqui</span>

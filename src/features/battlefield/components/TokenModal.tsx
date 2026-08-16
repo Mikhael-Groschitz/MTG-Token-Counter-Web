@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Save, Wand2, Upload, Image as ImageIcon, LayoutList, Maximize, Search, AlertCircle, AlertTriangle, Library } from 'lucide-react';
 import { TokenData, TokenColor } from '@/types';
@@ -33,7 +33,6 @@ const EMPTY_FORM: TokenData = {
 };
 
 export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibrarySave = false, libraryTokenCount = 0 }: TokenModalProps) => {
-    const fileInputRef = useRef<HTMLInputElement>(null);
     const isEditing = !!initialData;
     const { isAuthenticated } = useAuth();
 
@@ -205,8 +204,8 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
 
                             <div className="space-y-5">
                                 <div className="space-y-2">
-                                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest">Estilo do Card</label>
-                                    <div className="grid grid-cols-2 gap-2">
+                                    <span id="token-layout-label" className="block text-xs font-semibold text-gray-400 uppercase tracking-widest">Estilo do Card</span>
+                                    <div role="group" aria-labelledby="token-layout-label" className="grid grid-cols-2 gap-2">
                                         {(['classic', 'fullArt'] as const).map(layout => (
                                             <button
                                                 key={layout}
@@ -247,8 +246,8 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
                                     </div>
 
                                     {imageSource === 'upload' ? (
-                                        <div
-                                            onClick={() => fileInputRef.current?.click()}
+                                        <label
+                                            htmlFor="token-image-upload"
                                             className="relative h-44 w-full bg-gray-950 border-2 border-dashed border-gray-800 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-purple-500/50 hover:bg-purple-500/5 transition-all overflow-hidden group"
                                         >
                                             {formData.imageUrl?.startsWith('data:') ? (
@@ -266,8 +265,8 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
                                                     <p className="text-[11px] text-gray-600 mt-1 uppercase tracking-tighter">PNG, JPG ou WEBP (Max 5MB)</p>
                                                 </div>
                                             )}
-                                            <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
-                                        </div>
+                                            <input id="token-image-upload" type="file" onChange={handleFileChange} className="hidden" accept="image/*" />
+                                        </label>
                                     ) : (
                                         <div className="w-full bg-gray-950 border-2 border-gray-800 rounded-2xl p-4 space-y-3">
                                             <ScryfallTokenSearch onSelect={handleScryfallSelect} />
@@ -302,8 +301,9 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
                                 {/* Campos de identidade */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="col-span-2">
-                                        <label className="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-tighter">Nome do Token</label>
+                                        <label htmlFor="token-name" className="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-tighter">Nome do Token</label>
                                         <input
+                                            id="token-name"
                                             name="name"
                                             value={formData.name}
                                             onChange={handleChange}
@@ -312,8 +312,9 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-tighter">Tipo Base</label>
+                                        <label htmlFor="token-base-type" className="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-tighter">Tipo Base</label>
                                         <select
+                                            id="token-base-type"
                                             value={baseType}
                                             onChange={e => setBaseType(e.target.value)}
                                             className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-purple-500 appearance-none cursor-pointer"
@@ -326,8 +327,9 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-tighter">Subtipo</label>
+                                        <label htmlFor="token-sub-type" className="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-tighter">Subtipo</label>
                                         <input
+                                            id="token-sub-type"
                                             value={subType}
                                             onChange={e => setSubType(e.target.value)}
                                             className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-purple-500"
@@ -335,8 +337,9 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
                                         />
                                     </div>
                                     <div className="col-span-2">
-                                        <label className="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-tighter">Cor da Moldura</label>
+                                        <label htmlFor="token-color" className="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-tighter">Cor da Moldura</label>
                                         <select
+                                            id="token-color"
                                             name="color"
                                             value={formData.color}
                                             onChange={handleChange}
@@ -354,7 +357,7 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
 
                                     {formData.color === 'multicolored' && (
                                         <div className="col-span-2 space-y-3 bg-gray-950/50 border border-gray-800 rounded-xl p-3">
-                                            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-tighter">Identidade de Cor</label>
+                                            <span className="block text-xs font-semibold text-gray-400 uppercase tracking-tighter">Identidade de Cor</span>
                                             {([2, 3, 4, 5] as IdentityTier[]).map(tier => (
                                                 <div key={tier}>
                                                     <p className="text-[10px] text-gray-500 mb-1.5 uppercase tracking-widest">{TIER_LABELS[tier]}</p>
@@ -386,10 +389,11 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
                                 </div>
 
                                 <div className={formData.layout === 'fullArt' ? 'opacity-30 pointer-events-none' : ''}>
-                                    <label className="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-tighter">
+                                    <label htmlFor="token-abilities" className="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-tighter">
                                         Habilidades {formData.layout === 'fullArt' && '(Oculto no Full Art)'}
                                     </label>
                                     <textarea
+                                        id="token-abilities"
                                         name="abilities"
                                         value={formData.abilities}
                                         onChange={handleChange}
@@ -401,12 +405,12 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase">Poder</label>
-                                        <input name="power" value={formData.power} onChange={handleChange} className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white text-center focus:border-purple-500 outline-none" placeholder="0" />
+                                        <label htmlFor="token-power" className="text-[10px] font-bold text-gray-400 uppercase">Poder</label>
+                                        <input id="token-power" name="power" value={formData.power} onChange={handleChange} className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white text-center focus:border-purple-500 outline-none" placeholder="0" />
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase">Resistência</label>
-                                        <input name="toughness" value={formData.toughness} onChange={handleChange} className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white text-center focus:border-purple-500 outline-none" placeholder="0" />
+                                        <label htmlFor="token-toughness" className="text-[10px] font-bold text-gray-400 uppercase">Resistência</label>
+                                        <input id="token-toughness" name="toughness" value={formData.toughness} onChange={handleChange} className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white text-center focus:border-purple-500 outline-none" placeholder="0" />
                                     </div>
                                 </div>
                             </div>

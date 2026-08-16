@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ShieldCheck, Loader2, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
 import { authService } from '@/services/authService';
+import { SEO } from '@/components/SEO';
 
 const RESEND_COOLDOWN = 60; // segundos
 
@@ -68,6 +69,7 @@ export const VerifyEmailPage = () => {
 
     return (
         <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden rounded-3xl">
+            <SEO title="Verificar E-mail" description="Verifique seu e-mail para ativar sua conta TokenForge." path="/verificar-email" noindex />
 
             {/* Blooms de fundo */}
             <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
@@ -96,10 +98,11 @@ export const VerifyEmailPage = () => {
 
                     <form onSubmit={handleVerify} className="space-y-6 text-left">
                         <div className="space-y-3">
-                            <label className="block text-[10px] font-bold uppercase text-gray-500 tracking-[0.2em] text-center">
+                            <label htmlFor="verify-code" className="block text-[10px] font-bold uppercase text-gray-500 tracking-[0.2em] text-center">
                                 Código de Verificação
                             </label>
                             <input
+                                id="verify-code"
                                 type="text"
                                 inputMode="numeric"
                                 maxLength={6}
@@ -115,6 +118,7 @@ export const VerifyEmailPage = () => {
                                         : 'border-gray-800 text-white focus:border-purple-500/50'
                                 }`}
                                 placeholder="000000"
+                                // eslint-disable-next-line jsx-a11y/no-autofocus -- deliberate: this is a single-field OTP entry screen reached right after a redirect, autofocus is the expected UX for code-entry flows
                                 autoFocus
                             />
 

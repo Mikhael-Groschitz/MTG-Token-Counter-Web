@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { TokenCard } from '@/features/battlefield/components/TokenCard';
 import { TokenData } from '@/types';
+import { SEO } from '@/components/SEO';
 
 const soldierToken: TokenData = {
     id: 'preview-soldier',
@@ -56,9 +57,14 @@ const zombieToken: TokenData = {
 export const LandingPage = () => {
     return (
         <div className="flex flex-col pb-20">
+            <SEO
+                title="Crie e Controle Tokens de Magic: The Gathering Grátis"
+                description="TokenForge é um contador de tokens gratuito e não oficial para Magic: The Gathering. Crie tokens personalizados, controle quantidades em tempo real e salve seus modelos favoritos."
+                path="/"
+            />
             <header className="max-w-7xl mx-auto w-full px-6 py-6 flex items-center justify-between">
                 <Link to="/" className="flex items-center gap-2">
-                    <img src="/logo.svg" alt="Logo TokenForge" className="w-9 h-9" />
+                    <img src="/icons/icon-192.png" alt="Logo TokenForge" width={36} height={36} className="w-9 h-9" />
                     <span className="font-bold text-lg tracking-tight text-white">Token Forge</span>
                 </Link>
                 <Link
@@ -100,7 +106,7 @@ export const LandingPage = () => {
                         <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-10">
                             <Link
                                 to="/jogar"
-                                className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-purple-900/30 hover:shadow-purple-900/50 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                                className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-purple-900/30 hover:shadow-purple-900/50 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
                             >
                                 <Hammer size={20} />
                                 Começar a Forjar sem Cadastro
@@ -138,7 +144,7 @@ export const LandingPage = () => {
                                 animate={{ y: [0, -10, 0] }}
                                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                             >
-                                <TokenCard data={soldierToken} />
+                                <TokenCard data={soldierToken} loading="eager" />
                             </motion.div>    
                         </motion.div>
 
@@ -153,7 +159,7 @@ export const LandingPage = () => {
                                 animate={{ y: [0, -10, 0] }}
                                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                             >
-                                <TokenCard data={zombieToken} />
+                                <TokenCard data={zombieToken} loading="eager" />
                             </motion.div>
                         </motion.div>
 
@@ -168,7 +174,7 @@ export const LandingPage = () => {
                                 animate={{ y: [0, -10, 0] }}
                                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                             >
-                                <TokenCard data={dragonToken} />
+                                <TokenCard data={dragonToken} loading="eager" />
                             </motion.div>    
                         </motion.div>
                     </div>
@@ -289,7 +295,7 @@ export const LandingPage = () => {
                         </p>
                         <Link
                             to="/jogar"
-                            className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-purple-900/30 hover:shadow-purple-900/50 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                            className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-purple-900/30 hover:shadow-purple-900/50 hover:scale-[1.02] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
                         >
                             <Hammer size={20} />
                             Começar a Forjar sem Cadastro

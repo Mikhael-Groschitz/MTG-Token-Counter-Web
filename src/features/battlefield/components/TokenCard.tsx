@@ -10,6 +10,7 @@ import { useManaSymbols } from '@/hooks/useManaSymbols';
 interface TokenCardProps {
     data: TokenData;
     className?: string;
+    loading?: 'lazy' | 'eager';
 }
 
 // --- CONFIGURAÇÃO DE ESTILOS ---
@@ -41,7 +42,7 @@ function getFrameStyle(data: Pick<TokenData, 'color' | 'colorIdentity'>): { clas
 
 const textBoxBase = "border-[1px] border-[#8f9193] shadow-inner z-20 relative text-black transition-all duration-300";
 
-export const TokenCard: React.FC<TokenCardProps> = ({ data, className = '' }) => {
+export const TokenCard: React.FC<TokenCardProps> = ({ data, className = '', loading = 'lazy' }) => {
     const isFullArt = data.layout === 'fullArt';
     const { className: frameClassName, style: frameStyle } = getFrameStyle(data);
     const symbolMap = useManaSymbols();
@@ -94,6 +95,7 @@ export const TokenCard: React.FC<TokenCardProps> = ({ data, className = '' }) =>
                         <img
                             src={data.imageUrl}
                             alt={data.name}
+                            loading={loading}
                             className="w-full h-full object-cover object-top"
                         />
                         <div className="absolute inset-0 bg-black/10" />
@@ -111,6 +113,7 @@ export const TokenCard: React.FC<TokenCardProps> = ({ data, className = '' }) =>
                             <img
                                 src={data.imageUrl}
                                 alt={data.name}
+                                loading={loading}
                                 className="w-full h-full object-cover object-top hover:scale-110 transition-transform duration-700"
                             />
                         ) : (

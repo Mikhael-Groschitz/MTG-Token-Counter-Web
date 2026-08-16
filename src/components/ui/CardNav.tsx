@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Link } from 'react-router-dom';
-import { GoArrowUpRight } from 'react-icons/go';
+import { ArrowUpRight } from 'lucide-react';
 
 type CardNavLink = {
     label: string;
@@ -101,17 +101,20 @@ const CardNav: React.FC<CardNavProps> = ({
             >
                 <div className="absolute inset-x-0 top-0 h-[60px] flex items-center justify-between px-6 z-20">
                     <button
+                        type="button"
                         onClick={toggleMenu}
-                        className="flex flex-col gap-[5px] group cursor-pointer p-2"
-                        aria-label="Toggle menu"
+                        className="flex flex-col gap-[5px] group cursor-pointer p-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+                        aria-label={isExpanded ? 'Fechar menu' : 'Abrir menu'}
+                        aria-expanded={isExpanded}
+                        aria-controls="card-nav-content"
                     >
                         <span className={`w-6 h-[2px] bg-white transition-transform origin-center duration-300 ${isExpanded ? 'rotate-45 translate-y-[7px]' : ''}`} />
                         <span className={`w-6 h-[2px] bg-white transition-opacity duration-300 ${isExpanded ? 'opacity-0' : ''}`} />
                         <span className={`w-6 h-[2px] bg-white transition-transform origin-center duration-300 ${isExpanded ? '-rotate-45 -translate-y-[7px]' : ''}`} />
                     </button>
 
-                    <Link to={logoHref} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 text-white font-bold text-xl">
-                        <img src="/logo.svg" alt="Logo TokenForge" className="w-10 h-10" />
+                    <Link to={logoHref} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 text-white font-bold text-xl rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
+                        <img src="/icons/icon-192.png" alt="Logo TokenForge" width={40} height={40} className="w-10 h-10" />
                         <span>Token Forge</span>
                     </Link>
 
@@ -119,7 +122,7 @@ const CardNav: React.FC<CardNavProps> = ({
                         <button
                             type="button"
                             onClick={onLogout}
-                            className="hidden md:flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-transform hover:scale-105"
+                            className="hidden md:flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
                             style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
                         >
                             Sair
@@ -127,7 +130,7 @@ const CardNav: React.FC<CardNavProps> = ({
                     ) : (
                         <Link
                             to="/entrar"
-                            className="hidden md:flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-transform hover:scale-105"
+                            className="hidden md:flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
                             style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
                         >
                             Entrar na sua conta
@@ -135,7 +138,7 @@ const CardNav: React.FC<CardNavProps> = ({
                     )}
                 </div>
 
-                <div ref={contentRef} className="pt-[70px] pb-4 px-4 flex flex-col md:flex-row gap-4 items-stretch justify-center">
+                <div id="card-nav-content" ref={contentRef} className="pt-[70px] pb-4 px-4 flex flex-col md:flex-row gap-4 items-stretch justify-center">
                     {items.map((item, idx) => (
                         <div
                             key={idx}
@@ -157,7 +160,7 @@ const CardNav: React.FC<CardNavProps> = ({
                                         className="inline-flex items-center gap-2 text-sm md:text-base opacity-80 hover:opacity-100 transition-opacity font-medium group"
                                         aria-label={link.ariaLabel}
                                     >
-                                        <GoArrowUpRight className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                        <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                         {link.label}
                                     </Link>
                                 ))}

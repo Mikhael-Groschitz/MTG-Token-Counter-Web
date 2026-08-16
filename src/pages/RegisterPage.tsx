@@ -4,6 +4,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { motion } from 'motion/react';
 import { Mail, Lock, User, ArrowRight, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { SEO } from '@/components/SEO';
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -59,6 +60,7 @@ export const RegisterPage = () => {
 
     return (
         <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden rounded-3xl">
+            <SEO title="Criar Conta" description="Crie sua conta gratuita no TokenForge." path="/cadastro" noindex />
             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px]" />
 
@@ -113,12 +115,13 @@ export const RegisterPage = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-1">
-                            <label className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Nome de Usuário</label>
+                            <label htmlFor="register-username" className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Nome de Usuário</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-400 transition-colors">
                                     <User size={18} />
                                 </div>
                                 <input
+                                    id="register-username"
                                     type="text"
                                     name="username"
                                     required
@@ -131,12 +134,13 @@ export const RegisterPage = () => {
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Email</label>
+                            <label htmlFor="register-email" className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Email</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-400 transition-colors">
                                     <Mail size={18} />
                                 </div>
                                 <input
+                                    id="register-email"
                                     type="email"
                                     name="email"
                                     required
@@ -149,12 +153,13 @@ export const RegisterPage = () => {
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Senha</label>
+                            <label htmlFor="register-password" className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Senha</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-400 transition-colors">
                                     <Lock size={18} />
                                 </div>
                                 <input
+                                    id="register-password"
                                     type={showPassword ? 'text' : 'password'}
                                     name="password"
                                     required
@@ -190,12 +195,13 @@ export const RegisterPage = () => {
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Confirmar Senha</label>
+                            <label htmlFor="register-confirm-password" className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Confirmar Senha</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-400 transition-colors">
                                     <Lock size={18} />
                                 </div>
                                 <input
+                                    id="register-confirm-password"
                                     type={showPassword ? 'text' : 'password'}
                                     name="confirmPassword"
                                     required

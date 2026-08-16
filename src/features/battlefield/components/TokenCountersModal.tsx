@@ -92,9 +92,9 @@ export const TokenCountersModal = ({ isOpen, onClose, token, onChange }: TokenCo
 
                             <div className="space-y-6">
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">
+                                    <span className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">
                                         Marcadores de +1/+1
-                                    </label>
+                                    </span>
                                     <div className="divide-y divide-gray-800">
                                         {PT_COUNTER_DEFS.map(def => (
                                             <CounterStepperRow
@@ -109,9 +109,9 @@ export const TokenCountersModal = ({ isOpen, onClose, token, onChange }: TokenCo
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">
+                                    <span className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">
                                         Palavras-chave
-                                    </label>
+                                    </span>
                                     <div className="divide-y divide-gray-800">
                                         {KEYWORD_COUNTER_DEFS.map(def => {
                                             const Icon = def.icon;

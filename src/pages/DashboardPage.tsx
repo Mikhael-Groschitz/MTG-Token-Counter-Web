@@ -6,6 +6,7 @@ import { TokenModal } from '@/features/battlefield/components/TokenModal';
 import { TokenData } from '@/types';
 import { useTokens } from '@/hooks/useTokens';
 import { useAuth } from '@/context/AuthContext';
+import { SEO } from '@/components/SEO';
 
 const MAX_TOKENS = 5;
 
@@ -78,6 +79,7 @@ export const DashboardPage = () => {
 
     return (
         <div className="min-h-screen pt-4 pb-20">
+            <SEO title="Minha Biblioteca" description="Gerencie seus tokens salvos no TokenForge." path="/painel" noindex />
 
             <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b border-gray-800 pb-6">
                 <div>
@@ -197,12 +199,12 @@ export const DashboardPage = () => {
                         <form className="space-y-8" onSubmit={handleSaveSettings}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-400">Nome de Usuário</label>
-                                    <input type="text" value={username} onChange={e => setUsername(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all" />
+                                    <label htmlFor="dash-username" className="text-sm font-medium text-gray-400">Nome de Usuário</label>
+                                    <input id="dash-username" type="text" value={username} onChange={e => setUsername(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all" />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-400">Email</label>
-                                    <input type="email" value={user?.email ?? ''} disabled className="w-full bg-gray-950/50 border border-gray-800 rounded-xl px-4 py-3 text-gray-500 cursor-not-allowed" />
+                                    <label htmlFor="dash-email" className="text-sm font-medium text-gray-400">Email</label>
+                                    <input id="dash-email" type="email" value={user?.email ?? ''} disabled className="w-full bg-gray-950/50 border border-gray-800 rounded-xl px-4 py-3 text-gray-500 cursor-not-allowed" />
                                     <p className="text-xs text-gray-600">O email não pode ser alterado.</p>
                                 </div>
                             </div>
@@ -211,17 +213,17 @@ export const DashboardPage = () => {
                                 <div className="space-y-4 pt-4">
                                     <h3 className="text-lg font-semibold text-white border-l-4 border-purple-500 pl-3">Segurança</h3>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium text-gray-400">Senha Atual</label>
-                                        <input type="password" placeholder="••••••••" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
+                                        <label htmlFor="dash-current-password" className="text-sm font-medium text-gray-400">Senha Atual</label>
+                                        <input id="dash-current-password" type="password" placeholder="••••••••" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-400">Nova Senha</label>
-                                            <input type="password" placeholder="••••••••" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
+                                            <label htmlFor="dash-new-password" className="text-sm font-medium text-gray-400">Nova Senha</label>
+                                            <input id="dash-new-password" type="password" placeholder="••••••••" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-400">Confirmar Senha</label>
-                                            <input type="password" placeholder="••••••••" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
+                                            <label htmlFor="dash-confirm-password" className="text-sm font-medium text-gray-400">Confirmar Senha</label>
+                                            <input id="dash-confirm-password" type="password" placeholder="••••••••" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
                                         </div>
                                     </div>
                                 </div>

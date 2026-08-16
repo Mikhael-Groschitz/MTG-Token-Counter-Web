@@ -84,7 +84,7 @@ export const ScryfallTokenSearch = ({ onSelect }: ScryfallTokenSearchProps) => {
                                 className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-purple-500/10 text-left transition-colors"
                             >
                                 {thumb ? (
-                                    <img src={thumb} alt={card.name} className="w-8 h-8 rounded-md object-cover shrink-0" />
+                                    <img src={thumb} alt={card.name} loading="lazy" className="w-8 h-8 rounded-md object-cover shrink-0" />
                                 ) : (
                                     <div className="w-8 h-8 rounded-md bg-gray-800 shrink-0" />
                                 )}

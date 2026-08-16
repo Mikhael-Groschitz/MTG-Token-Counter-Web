@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Mail, ArrowLeft, Loader2, CheckCircle, Send, Lock, AlertCircle } from 'lucide-react';
 import { authService } from '@/services/authService';
+import { SEO } from '@/components/SEO';
 
 export const ForgotPasswordPage = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +27,7 @@ export const ForgotPasswordPage = () => {
 
     return (
         <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden rounded-3xl">
+            <SEO title="Esqueci Minha Senha" description="Recupere o acesso à sua conta TokenForge." path="/esqueci-senha" noindex />
 
             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px]" />
@@ -63,12 +65,13 @@ export const ForgotPasswordPage = () => {
 
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Email Cadastrado</label>
+                                        <label htmlFor="forgot-email" className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Email Cadastrado</label>
                                         <div className="relative group">
                                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-400 transition-colors">
                                                 <Mail size={18} />
                                             </div>
                                             <input
+                                                id="forgot-email"
                                                 type="email"
                                                 required
                                                 value={email}

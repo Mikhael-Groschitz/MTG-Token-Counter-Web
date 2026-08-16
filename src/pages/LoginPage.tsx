@@ -4,6 +4,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { motion } from 'motion/react';
 import { Lock, LogIn, Loader2, User, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { SEO } from '@/components/SEO';
 
 export const LoginPage = () => {
     const navigate = useNavigate();
@@ -35,6 +36,7 @@ export const LoginPage = () => {
 
     return (
         <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden rounded-3xl">
+            <SEO title="Entrar" description="Entre na sua conta TokenForge." path="/entrar" noindex />
             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px]" />
 
@@ -89,12 +91,13 @@ export const LoginPage = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-1">
-                            <label className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Email ou Usuário</label>
+                            <label htmlFor="login-identifier" className="text-[10px] font-bold uppercase text-gray-500 ml-1 tracking-wider">Email ou Usuário</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-400 transition-colors">
                                     <User size={18} />
                                 </div>
                                 <input
+                                    id="login-identifier"
                                     type="text"
                                     required
                                     value={identifier}
@@ -107,7 +110,7 @@ export const LoginPage = () => {
 
                         <div className="space-y-1">
                             <div className="flex justify-between items-center px-1">
-                                <label className="text-[10px] font-bold uppercase text-gray-500 tracking-wider">Senha</label>
+                                <label htmlFor="login-password" className="text-[10px] font-bold uppercase text-gray-500 tracking-wider">Senha</label>
                                 <Link to="/esqueci-senha" className="text-[11px] text-purple-400 hover:text-purple-300 transition-colors">
                                     Esqueceu a senha?
                                 </Link>
@@ -117,6 +120,7 @@ export const LoginPage = () => {
                                     <Lock size={18} />
                                 </div>
                                 <input
+                                    id="login-password"
                                     type="password"
                                     required
                                     value={password}

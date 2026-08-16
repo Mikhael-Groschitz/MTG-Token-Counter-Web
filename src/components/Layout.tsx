@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import CardNav, { CardNavItem } from './ui/CardNav';
+import { CardNavItem } from './ui/CardNav';
 import { useAuth } from '@/context/AuthContext';
+
+const CardNav = lazy(() => import('./ui/CardNav'));
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -55,18 +57,26 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
     return (
         <div className="min-h-screen flex flex-col bg-gray-950 text-gray-100 font-sans selection:bg-purple-500 selection:text-white">
+            <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-purple-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg"
+            >
+                Pular para o conteúdo
+            </a>
 
             {!isLanding && (
-                <CardNav
-                    items={navItems}
-                    baseColor="#111827"
-                    logoHref={'/jogar'}
-                    isAuthenticated={isAuthenticated}
-                    onLogout={logout}
-                />
+                <Suspense fallback={null}>
+                    <CardNav
+                        items={navItems}
+                        baseColor="#111827"
+                        logoHref={'/jogar'}
+                        isAuthenticated={isAuthenticated}
+                        onLogout={logout}
+                    />
+                </Suspense>
             )}
 
-            <main className={isLanding ? 'flex-grow w-full' : 'flex-grow max-w-7xl mx-auto px-4 pt-24 pb-8 w-full'}>
+            <main id="main-content" tabIndex={-1} className={isLanding ? 'flex-grow w-full' : 'flex-grow max-w-7xl mx-auto px-4 pt-24 pb-8 w-full'}>
                 {children}
             </main>
 
@@ -80,7 +90,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                         <span className="text-gray-800">•</span>
                         <Link to="/termos-de-uso" className="hover:text-purple-400 transition-colors">Termos de Uso</Link>
                     </nav>
-                    <p className="text-[10px] text-gray-600 max-w-2xl leading-relaxed uppercase tracking-tighter italic">
+                    <p className="text-[10px] text-gray-400 max-w-2xl leading-relaxed uppercase tracking-tighter italic">
                         Token Forge é um conteúdo de fã não oficial permitido pela Política de Conteúdo de Fãs da Wizards of the Coast.
                         Este projeto não é aprovado ou endossado pela Wizards. Magic: The Gathering e suas marcas são propriedade da Wizards of the Coast LLC.
                     </p>

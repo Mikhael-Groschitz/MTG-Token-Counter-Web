@@ -1,11 +1,17 @@
 import { Link } from 'react-router-dom';
 import { Scroll } from 'lucide-react';
+import { SEO } from '@/components/SEO';
 
 const LAST_UPDATED = '11 de agosto de 2026';
 
 export const TermsOfServicePage = () => {
     return (
         <div className="max-w-3xl mx-auto space-y-10 py-10">
+            <SEO
+                title="Termos de Uso"
+                description="Confira os termos de uso do TokenForge."
+                path="/termos-de-uso"
+            />
             <header className="text-center space-y-4">
                 <div className="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto border border-purple-500/20">
                     <Scroll className="w-8 h-8 text-purple-400" />

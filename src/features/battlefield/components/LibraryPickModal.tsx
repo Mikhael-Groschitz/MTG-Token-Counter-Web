@@ -79,10 +79,11 @@ export const LibraryPickModal = ({
                                     {libraryTokens.map(token => {
                                         const isOnField = activeTokenIds.includes(token.id);
                                         return (
-                                            <div
+                                            <button
                                                 key={token.id}
+                                                type="button"
                                                 onClick={() => onSelect(token)}
-                                                className="cursor-pointer group relative transform hover:scale-[1.02] transition-transform"
+                                                className="text-left cursor-pointer group relative transform hover:scale-[1.02] transition-transform"
                                             >
                                                 <TokenCard
                                                     data={token}
@@ -102,7 +103,7 @@ export const LibraryPickModal = ({
                                                         {isOnField ? '+1 na Mesa' : 'Adicionar'}
                                                     </span>
                                                 </div>
-                                            </div>
+                                            </button>
                                         );
                                     })}
                                 </div>
