@@ -19,8 +19,7 @@ interface FormState {
     severity: Severity;
     description: string;
     steps: string;
-    environment: string;
-    version: string;
+    occurredAt: string;
 }
 
 interface BugReportPayload extends FormState {
@@ -46,8 +45,6 @@ const MODULES: string[] = [
     "Tokens",
     "Outro",
 ];
-
-const ENVIRONMENTS: string[] = ["Produção"];
 
 const severityStyles: Record<Severity, SeverityStyle> = {
     low: {
@@ -90,8 +87,7 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
         severity: "medium",
         description: "",
         steps: "",
-        environment: "",
-        version: "",
+        occurredAt: new Date().toISOString().slice(0, 10),
     });
 
     function handleChange(
@@ -272,36 +268,16 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                 />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label htmlFor="bug-environment" className={labelClass}>Ambiente</label>
-                    <select
-                        id="bug-environment"
-                        name="environment"
-                        value={form.environment}
-                        onChange={handleChange}
-                        className={inputClass}
-                    >
-                        <option value="" className="bg-[#1a1a2e]">Selecionar...</option>
-                        {ENVIRONMENTS.map((env) => (
-                            <option key={env} value={env} className="bg-[#1a1a2e]">
-                                {env}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="bug-version" className={labelClass}>Versão do sistema</label>
-                    <input
-                        id="bug-version"
-                        type="text"
-                        name="version"
-                        value={form.version}
-                        onChange={handleChange}
-                        placeholder="ex: 2.3.1"
-                        className={inputClass}
-                    />
-                </div>
+            <div>
+                <label htmlFor="bug-date" className={labelClass}>Data do ocorrido</label>
+                <input
+                    id="bug-date"
+                    type="date"
+                    name="occurredAt"
+                    value={form.occurredAt}
+                    onChange={handleChange}
+                    className={inputClass}
+                />
             </div>
 
             <div>

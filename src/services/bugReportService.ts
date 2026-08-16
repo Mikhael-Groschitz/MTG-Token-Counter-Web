@@ -6,8 +6,7 @@ export interface BugReportPayload {
     severity: string;
     description: string;
     steps: string;
-    environment: string;
-    version: string;
+    occurredAt: string;
     reporterEmail?: string;
     files: File[];
 }
@@ -20,8 +19,7 @@ export const bugReportService = {
         formData.append('severity', payload.severity);
         formData.append('description', payload.description);
         formData.append('steps', payload.steps);
-        formData.append('environment', payload.environment);
-        formData.append('version', payload.version);
+        formData.append('occurredAt', payload.occurredAt);
         if (payload.reporterEmail) {
             formData.append('reporterEmail', payload.reporterEmail);
         }
