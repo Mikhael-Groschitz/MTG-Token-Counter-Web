@@ -1,18 +1,3 @@
-// Vercel Routing Middleware: WhatsApp/Facebook/Twitter/etc. link-preview
-// crawlers don't execute JavaScript, so the per-route <title>/og:*/twitter:*
-// tags set client-side by react-helmet-async (src/components/SEO.tsx) are
-// invisible to them — they only ever see the single static index.html.
-// This middleware intercepts *only* requests from those known bots on the
-// public indexable routes and swaps the relevant tags for route-specific
-// values before returning the HTML. Everyone else (real users, unmapped
-// routes, static assets) passes through untouched.
-//
-// Keep ROUTES below in sync with the title/description props passed to
-// <SEO ... /> in src/pages/*.tsx — this is intentionally duplicated rather
-// than imported from src/, since this file is bundled separately by Vercel
-// for the Edge runtime and importing the Vite app's source tree here would
-// risk pulling in browser-only code into that bundle.
-
 export const config = {
     runtime: 'edge',
     matcher: ['/', '/jogar', '/apoiar', '/politica-de-privacidade', '/termos-de-uso'],

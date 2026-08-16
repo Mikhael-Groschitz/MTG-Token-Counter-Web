@@ -12,9 +12,14 @@ TokenForge é um projeto de fã, não oficial, que permite criar tokens personal
 - 🔓 **Modo Anônimo** — crie tokens ilimitados salvos no cache do navegador, sem necessidade de conta
 - 👤 **Modo Logado** — salve até 5 modelos de tokens na sua conta e acesse de qualquer navegador
 - 🃏 **Tokens Customizados** — defina nome, tipo, cor, poder/resistência, habilidades e imagem
-- 🖼️ **Upload de Imagem** — envie sua própria arte ou use uma URL externa
+- 🔍 **Busca via Scryfall** — pesquise tokens oficiais direto da API do Scryfall e importe arte e atributos automaticamente
+- 🖼️ **Upload de Imagem** — envie sua própria arte como alternativa à busca no Scryfall
 - 🎨 **Dois layouts de card** — Clássico e Full Art
+- ➕ **Contadores de Poder/Vida e Palavra-chave** — ajuste +1/+1, -1/-1 e marcadores de habilidades (voar, atropelar, etc.) direto no card, com botão de reset rápido
 - 🔐 **Autenticação** — login com email/senha ou Google OAuth
+- 📄 **Páginas institucionais** — Landing Page, Termos de Uso, Política de Privacidade e formulário de Bug Report
+- 🔎 **SEO** — meta tags dinâmicas via `react-helmet-async`, middleware de pre-rendering para bots/crawlers, `sitemap.xml` e `robots.txt`
+- 📱 **PWA** — instalável, com manifest e ícones adaptativos
 
 ---
 
@@ -25,12 +30,16 @@ TokenForge é um projeto de fã, não oficial, que permite criar tokens personal
 | React 18 + TypeScript | Framework principal |
 | Vite | Build e dev server |
 | Tailwind CSS | Estilização |
-| React Router v6 | Roteamento |
+| React Router v7 | Roteamento |
 | Axios | Chamadas à API |
 | Motion (Framer Motion) | Animações |
 | GSAP | Animação do menu de navegação |
 | Lucide React | Ícones |
 | @react-oauth/google | Autenticação com Google |
+| react-helmet-async | Meta tags e SEO |
+| vite-plugin-pwa | PWA (manifest, service worker) |
+| @vercel/analytics | Analytics |
+| Scryfall API | Busca de dados e imagens de tokens oficiais |
 
 ---
 
@@ -94,39 +103,59 @@ src/
 ├── components/
 │   ├── ui/
 │   │   ├── BugReportForm.tsx
-│   │   ├── CardNav.tsx
-│   │   └── AnimatedList.tsx
-│   └── Layout.tsx
+│   │   └── CardNav.tsx
+│   ├── AnimatedList.tsx
+│   ├── Layout.tsx
+│   ├── ProtectedRoute.tsx
+│   └── SEO.tsx
 ├── context/
 │   └── AuthContext.tsx
 ├── features/
 │   └── battlefield/
-│       └── components/
-│           ├── TokenCard.tsx
-│           ├── TokenModal.tsx
-│           ├── TokenGallery.tsx
-│           └── LibraryPickModal.tsx
+│       ├── components/
+│       │   ├── TokenCard.tsx
+│       │   ├── TokenModal.tsx
+│       │   ├── TokenGallery.tsx
+│       │   ├── TokenCountersModal.tsx
+│       │   ├── ScryfallTokenSearch.tsx
+│       │   └── LibraryPickModal.tsx
+│       ├── constants/
+│       │   ├── colorIdentities.ts
+│       │   └── counters.ts
+│       └── utils/
+│           ├── counters.ts
+│           └── renderManaText.tsx
 ├── hooks/
 │   ├── useAuth.ts
-│   └── useTokens.ts
+│   ├── useTokens.ts
+│   └── useManaSymbols.ts
 ├── lib/
 │   └── utils.ts
 ├── pages/
+│   ├── LandingPage.tsx
 │   ├── GamePage.tsx
 │   ├── DashboardPage.tsx
 │   ├── LoginPage.tsx
 │   ├── RegisterPage.tsx
 │   ├── ForgotPasswordPage.tsx
+│   ├── ResetPasswordPage.tsx
 │   ├── VerifyEmailPage.tsx
 │   ├── SupportPage.tsx
-│   └── BugReportPage.tsx
+│   ├── BugReportPage.tsx
+│   ├── PrivacyPolicyPage.tsx
+│   └── TermsOfServicePage.tsx
 ├── services/
 │   ├── api.ts
 │   ├── authService.ts
-│   └── tokenService.ts
+│   ├── tokenService.ts
+│   ├── bugReportService.ts
+│   ├── scryfallService.ts
+│   └── scryfallSymbologyService.ts
 └── types/
     └── index.ts
 ```
+
+Na raiz do projeto, `middleware.ts` roda como Edge Function (Vercel) e serve HTML com meta tags pré-renderizadas para bots/crawlers de redes sociais.
 
 ---
 
@@ -134,14 +163,18 @@ src/
 
 | Rota | Página |
 |---|---|
-| `/` | Mesa de Jogo |
-| `/login` | Login |
-| `/register` | Cadastro |
-| `/forgot-password` | Recuperar Senha |
-| `/verify-email` | Verificação de Email |
-| `/dashboard` | Biblioteca de Tokens |
-| `/support` | Como Apoiar |
-| `/bugreport` | Reportar Bug |
+| `/` | Landing Page |
+| `/jogar` | Mesa de Jogo |
+| `/entrar` | Login |
+| `/cadastro` | Cadastro |
+| `/esqueci-senha` | Recuperar Senha |
+| `/redefinir-senha` | Redefinir Senha |
+| `/verificar-email` | Verificação de Email |
+| `/painel` | Biblioteca de Tokens (rota protegida) |
+| `/apoiar` | Como Apoiar |
+| `/reportar-bug` | Reportar Bug |
+| `/politica-de-privacidade` | Política de Privacidade |
+| `/termos-de-uso` | Termos de Uso |
 
 ---
 
