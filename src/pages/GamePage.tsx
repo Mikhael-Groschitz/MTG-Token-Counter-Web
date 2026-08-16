@@ -104,7 +104,7 @@ export const GamePage = () => {
         <div className="flex flex-col gap-8 pb-20 min-h-screen">
 
             {/* Header */}
-            <div className="flex justify-between items-center border-b border-gray-800 pb-6 sticky top-0 bg-gray-950/80 backdrop-blur-md z-40 py-4 px-4">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 border-b border-gray-800 pb-6 sticky top-0 bg-gray-950/80 backdrop-blur-md z-40 py-4 px-4">
                 <div className="flex items-center gap-3">
                     <Swords className="text-purple-500" size={32} />
                     <div>
@@ -116,12 +116,12 @@ export const GamePage = () => {
                     </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2 w-full md:w-auto">
                     {activeTokens.length > 0 && (
                         <>
                             <button
                                 onClick={resetQuantities}
-                                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-400 hover:text-purple-400 border border-gray-800 hover:border-purple-500/30 rounded-lg transition-all active:scale-95 bg-gray-900/50"
+                                className="flex flex-1 sm:flex-none items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-gray-400 hover:text-purple-400 border border-gray-800 hover:border-purple-500/30 rounded-lg transition-all active:scale-95 bg-gray-900/50"
                                 title="Resetar quantidades"
                             >
                                 <RotateCcw size={16} />
@@ -129,7 +129,7 @@ export const GamePage = () => {
                             </button>
                             <button
                                 onClick={resetMarkers}
-                                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-400 hover:text-purple-400 border border-gray-800 hover:border-purple-500/30 rounded-lg transition-all active:scale-95 bg-gray-900/50"
+                                className="flex flex-1 sm:flex-none items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-gray-400 hover:text-purple-400 border border-gray-800 hover:border-purple-500/30 rounded-lg transition-all active:scale-95 bg-gray-900/50"
                                 title="Resetar marcadores"
                             >
                                 <Eraser size={16} />
@@ -137,7 +137,7 @@ export const GamePage = () => {
                             </button>
                             <button
                                 onClick={resetTable}
-                                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-400 hover:text-red-400 border border-gray-800 hover:border-red-500/30 rounded-lg transition-all active:scale-95 bg-gray-900/50"
+                                className="flex flex-1 sm:flex-none items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-gray-400 hover:text-red-400 border border-gray-800 hover:border-red-500/30 rounded-lg transition-all active:scale-95 bg-gray-900/50"
                                 title="Limpar Mesa"
                             >
                                 <Trash2 size={16} />
@@ -147,7 +147,7 @@ export const GamePage = () => {
                     )}
                     <button
                         onClick={() => { setEditingToken(null); setIsPickModalOpen(true); }}
-                        className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow-lg shadow-purple-900/20 transition-all active:scale-95"
+                        className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2 shadow-lg shadow-purple-900/20 transition-all active:scale-95 w-full sm:w-auto"
                     >
                         <Plus size={20} /> Adicionar Token
                     </button>

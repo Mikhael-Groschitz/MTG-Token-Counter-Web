@@ -40,12 +40,14 @@ const CardNav: React.FC<CardNavProps> = ({
                                          }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const navRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
     const cardsRef = useRef<HTMLDivElement[]>([]);
     const tlRef = useRef<gsap.core.Timeline | null>(null);
 
     const calculateHeight = () => {
         const isMobile = window.matchMedia('(max-width: 768px)').matches;
-        return isMobile ? 550 : "auto";
+        if (!isMobile) return "auto";
+        return contentRef.current?.scrollHeight ?? 550;
     };
 
     useLayoutEffect(() => {
@@ -109,7 +111,7 @@ const CardNav: React.FC<CardNavProps> = ({
                     </button>
 
                     <Link to={logoHref} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 text-white font-bold text-xl">
-                        <img src="/logo.svg" alt="Logo TokenForge" className="w-16 h-16" />
+                        <img src="/logo.svg" alt="Logo TokenForge" className="w-10 h-10" />
                         <span>Token Forge</span>
                     </Link>
 
@@ -133,7 +135,7 @@ const CardNav: React.FC<CardNavProps> = ({
                     )}
                 </div>
 
-                <div className="pt-[70px] pb-4 px-4 flex flex-col md:flex-row gap-4 items-stretch justify-center">
+                <div ref={contentRef} className="pt-[70px] pb-4 px-4 flex flex-col md:flex-row gap-4 items-stretch justify-center">
                     {items.map((item, idx) => (
                         <div
                             key={idx}
