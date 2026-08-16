@@ -27,7 +27,7 @@ export interface TokenData {
     layout?: TokenLayout;
 }
 
-export type AuthProvider = 'local' | 'google' | 'facebook';
+export type AuthProvider = 'local' | 'google';
 
 export interface User {
     id?: string;

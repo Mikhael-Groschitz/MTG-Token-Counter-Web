@@ -21,12 +21,6 @@ export const authService = {
         return data;
     },
 
-    async loginWithFacebook(accessToken: string): Promise<AuthResponse> {
-        const { data } = await api.post<AuthResponse>('/auth/facebook', { access_token: accessToken });
-        localStorage.setItem(USER_KEY, JSON.stringify(data));
-        return data;
-    },
-
     async verifyEmail(email: string, code: string): Promise<void> {
         await api.post('/auth/verify-email', { email, code });
     },

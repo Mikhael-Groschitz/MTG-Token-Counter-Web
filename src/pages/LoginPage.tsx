@@ -1,17 +1,13 @@
 import { useState, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
-import FacebookLogin from '@greatsumini/react-facebook-login';
-import { FaFacebook } from 'react-icons/fa';
 import { motion } from 'motion/react';
 import { Lock, LogIn, Loader2, User, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-const FACEBOOK_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID as string | undefined;
-
 export const LoginPage = () => {
     const navigate = useNavigate();
-    const { login, loginWithGoogle, loginWithFacebook } = useAuth();
+    const { login, loginWithGoogle } = useAuth();
 
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
@@ -59,7 +55,7 @@ export const LoginPage = () => {
                         </p>
                     </div>
 
-                    {/* Login social — Google (credential/idToken) + Facebook (accessToken) */}
+                    {/* Login social — Google (credential/idToken) */}
                     <div className="flex items-center justify-center gap-3 mb-6">
                         <GoogleLogin
                             onSuccess={async (credentialResponse) => {
@@ -83,35 +79,6 @@ export const LoginPage = () => {
                             text="signin_with"
                             width="368"
                         />
-
-                        {FACEBOOK_APP_ID && (
-                            <FacebookLogin
-                                appId={FACEBOOK_APP_ID}
-                                onSuccess={async (response) => {
-                                    setIsLoading(true);
-                                    setError(null);
-                                    try {
-                                        await loginWithFacebook(response.accessToken);
-                                        navigate('/jogar');
-                                    } catch (err: any) {
-                                        setError(err.response?.data?.message || 'Falha ao autenticar com o Facebook.');
-                                    } finally {
-                                        setIsLoading(false);
-                                    }
-                                }}
-                                onFail={() => setError('Falha ao conectar com o Facebook. Tente novamente.')}
-                                render={({ onClick }) => (
-                                    <button
-                                        type="button"
-                                        onClick={onClick}
-                                        aria-label="Continuar com Facebook"
-                                        className="h-10 w-10 flex items-center justify-center bg-[#1877F2] hover:bg-[#166FE5] text-white rounded-lg transition-colors"
-                                    >
-                                        <FaFacebook size={20} />
-                                    </button>
-                                )}
-                            />
-                        )}
                     </div>
 
                     <div className="relative flex py-2 items-center mb-6">

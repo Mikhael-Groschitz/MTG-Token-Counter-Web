@@ -9,7 +9,6 @@ interface AuthContextType {
     login: (credentials: LoginCredentials) => Promise<void>;
     register: (userData: RegisterData) => Promise<void>;
     loginWithGoogle: (token: string) => Promise<void>;
-    loginWithFacebook: (accessToken: string) => Promise<void>;
     updateProfile: (payload: UpdateProfileData) => Promise<void>;
     logout: () => void;
 }
@@ -46,11 +45,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser({ username: data.username, email: data.email, provider: data.provider });
     };
 
-    const loginWithFacebook = async (accessToken: string) => {
-        const data = await authService.loginWithFacebook(accessToken);
-        setUser({ username: data.username, email: data.email, provider: data.provider });
-    };
-
     const updateProfile = async (payload: UpdateProfileData) => {
         const data = await authService.updateProfile(payload);
         setUser({ username: data.username, email: data.email, provider: data.provider });
@@ -77,7 +71,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             login,
             register,
             loginWithGoogle,
-            loginWithFacebook,
             updateProfile,
             logout,
         }}>

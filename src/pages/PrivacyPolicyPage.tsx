@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ShieldCheck } from 'lucide-react';
 
-const LAST_UPDATED = '11 de agosto de 2026';
+const LAST_UPDATED = '15 de agosto de 2026';
 
 export const PrivacyPolicyPage = () => {
     return (
@@ -27,7 +27,7 @@ export const PrivacyPolicyPage = () => {
                     <p>Coletamos apenas o necessário para o funcionamento da conta e da ferramenta:</p>
                     <ul className="list-disc list-inside space-y-1.5 text-gray-400 ml-2">
                         <li><strong className="text-gray-200">Dados de conta:</strong> nome de usuário e e-mail. Se você criar uma conta com senha, armazenamos apenas o hash da senha (nunca o texto original).</li>
-                        <li><strong className="text-gray-200">Login social (Google / Facebook):</strong> ao entrar com Google ou Facebook, recebemos seu nome, e-mail e um identificador único da conta social, fornecidos diretamente pelo provedor. Não recebemos nem armazenamos sua senha do Google ou Facebook.</li>
+                        <li><strong className="text-gray-200">Login social (Google):</strong> ao entrar com Google, recebemos seu nome, e-mail e um identificador único da conta social, fornecidos diretamente pelo provedor. Não recebemos nem armazenamos sua senha do Google.</li>
                         <li><strong className="text-gray-200">Dados dos tokens:</strong> nome, tipo, cor, força/resistência, habilidades e a imagem de cada token que você criar.</li>
                         <li><strong className="text-gray-200">Imagens:</strong> imagens enviadas por você (upload) ou URLs de imagens externas que você informar para seus tokens.</li>
                         <li><strong className="text-gray-200">Dados técnicos de uso:</strong> métricas agregadas e anônimas de navegação, coletadas pelo Vercel Analytics, sem uso de cookies de rastreamento.</li>
@@ -49,7 +49,7 @@ export const PrivacyPolicyPage = () => {
                     <h2 className="text-xl font-bold text-white">3. Com quem seus dados são compartilhados</h2>
                     <p>Utilizamos os seguintes serviços de terceiros para operar o TokenForge — cada um trata os dados que lhes são enviados de acordo com suas próprias políticas de privacidade:</p>
                     <ul className="list-disc list-inside space-y-1.5 text-gray-400 ml-2">
-                        <li><strong className="text-gray-200">Google e Facebook</strong> — apenas se você optar por entrar usando essas contas, para autenticação.</li>
+                        <li><strong className="text-gray-200">Google</strong> — apenas se você optar por entrar usando essa conta, para autenticação.</li>
                         <li><strong className="text-gray-200">Cloudinary</strong> — armazenamento e entrega das imagens dos seus tokens.</li>
                         <li><strong className="text-gray-200">Neon (PostgreSQL)</strong> — armazenamento do banco de dados da aplicação.</li>
                         <li><strong className="text-gray-200">Render</strong> — hospedagem do servidor da aplicação (backend).</li>
