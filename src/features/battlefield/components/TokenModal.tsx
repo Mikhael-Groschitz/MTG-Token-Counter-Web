@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Save, Wand2, Upload, Image as ImageIcon, LayoutList, Maximize, Link as LinkIcon, AlertCircle, Library } from 'lucide-react';
+import { X, Save, Wand2, Upload, Image as ImageIcon, LayoutList, Maximize, Search, AlertCircle, AlertTriangle, Library } from 'lucide-react';
 import { TokenData, TokenColor } from '@/types';
 import { tokenService } from '@/services/tokenService';
 import { useAuth } from '@/context/AuthContext';
 import { COLOR_IDENTITIES, TIER_LABELS, buildConicGradient, IdentityTier } from '../constants/colorIdentities';
+import { ScryfallTokenSearch } from './ScryfallTokenSearch';
+import { ScryfallCard, getImageStatusWarning, getScryfallImageUrl, mapScryfallColorsToToken } from '@/services/scryfallService';
 
 const MAX_LIBRARY_TOKENS = 5;
 
@@ -42,22 +44,26 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
 
     const [baseType, setBaseType] = useState('Creature');
     const [subType, setSubType] = useState('');
-    const [imageSource, setImageSource] = useState<'upload' | 'url'>('upload');
+    const [imageSource, setImageSource] = useState<'upload' | 'scryfall'>('upload');
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<TokenData>(EMPTY_FORM);
     const [saveToLibrary, setSaveToLibrary] = useState(false);
+    const [selectedScryfallCard, setSelectedScryfallCard] = useState<ScryfallCard | null>(null);
+    const [scryfallWarning, setScryfallWarning] = useState<string | null>(null);
 
     useEffect(() => {
         if (!isOpen) return;
         setError(null);
         setSaveToLibrary(false);
+        setSelectedScryfallCard(null);
+        setScryfallWarning(null);
         if (initialData) {
             setFormData(initialData);
             const parts = initialData.typeLine.replace('Token ', '').split(' — ');
             setBaseType(parts[0] || 'Creature');
             setSubType(parts[1] || '');
-            setImageSource(initialData.imageUrl?.startsWith('data:') ? 'upload' : 'url');
+            setImageSource(initialData.imageUrl?.startsWith('data:') ? 'upload' : 'scryfall');
         } else {
             setFormData(EMPTY_FORM);
             setBaseType('Creature');
@@ -65,6 +71,35 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
             setImageSource('upload');
         }
     }, [isOpen, initialData]);
+
+    const handleScryfallSelect = (card: ScryfallCard) => {
+        if (card.layout !== 'token') {
+            setError('Este resultado não é um card de token no Scryfall.');
+            return;
+        }
+        setError(null);
+
+        const { color, colorIdentity } = mapScryfallColorsToToken(card.colors);
+        const typeLine = card.type_line ?? formData.typeLine;
+        const parts = typeLine.replace('Token ', '').split(' — ');
+        setBaseType(parts[0] || 'Creature');
+        setSubType(parts[1] || '');
+
+        setFormData(prev => ({
+            ...prev,
+            name: card.name,
+            typeLine,
+            color,
+            colorIdentity,
+            abilities: card.oracle_text ?? '',
+            power: card.power ?? '',
+            toughness: card.toughness ?? '',
+            imageUrl: getScryfallImageUrl(card, prev.layout) ?? prev.imageUrl,
+        }));
+
+        setSelectedScryfallCard(card);
+        setScryfallWarning(getImageStatusWarning(card));
+    };
 
     useEffect(() => {
         const fullType = subType.trim()
@@ -178,7 +213,13 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
                                             <button
                                                 key={layout}
                                                 type="button"
-                                                onClick={() => setFormData(p => ({ ...p, layout }))}
+                                                onClick={() => setFormData(prev => ({
+                                                    ...prev,
+                                                    layout,
+                                                    imageUrl: (imageSource === 'scryfall' && selectedScryfallCard)
+                                                        ? getScryfallImageUrl(selectedScryfallCard, layout) ?? prev.imageUrl
+                                                        : prev.imageUrl,
+                                                }))}
                                                 className={`flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 transition-all ${
                                                     formData.layout === layout
                                                         ? 'border-purple-500 bg-purple-500/20 text-white shadow-[0_0_15px_rgba(168,85,247,0.2)]'
@@ -193,7 +234,7 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
 
                                 <div className="space-y-3">
                                     <div className="flex gap-4 border-b border-gray-800 pb-2">
-                                        {(['upload', 'url'] as const).map(src => (
+                                        {(['upload', 'scryfall'] as const).map(src => (
                                             <button
                                                 key={src}
                                                 type="button"
@@ -202,7 +243,7 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
                                                     imageSource === src ? 'text-purple-400' : 'text-gray-600 hover:text-gray-400'
                                                 }`}
                                             >
-                                                {src === 'upload' ? <><Upload size={14} /> Upload</> : <><LinkIcon size={14} /> URL Externa</>}
+                                                {src === 'upload' ? <><Upload size={14} /> Upload</> : <><Search size={14} /> Scryfall</>}
                                             </button>
                                         ))}
                                     </div>
@@ -230,24 +271,30 @@ export const TokenModal = ({ isOpen, onClose, onSave, initialData, forceLibraryS
                                             <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
                                         </div>
                                     ) : (
-                                        <div className="h-44 w-full bg-gray-950 border-2 border-gray-800 rounded-2xl flex flex-col items-center justify-center p-6 space-y-3">
-                                            <div className="w-full">
-                                                <label className="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-widest">Link da Imagem</label>
-                                                <input
-                                                    name="imageUrl"
-                                                    value={formData.imageUrl?.startsWith('data:') ? '' : formData.imageUrl}
-                                                    onChange={handleChange}
-                                                    className="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white text-sm outline-none focus:border-purple-500 transition-all"
-                                                    placeholder="https://cards.scryfall.io/..."
-                                                />
-                                            </div>
+                                        <div className="w-full bg-gray-950 border-2 border-gray-800 rounded-2xl p-4 space-y-3">
+                                            <ScryfallTokenSearch onSelect={handleScryfallSelect} />
+
                                             {formData.imageUrl && !formData.imageUrl.startsWith('data:') && (
-                                                <div className="flex items-center gap-2 text-[10px] text-green-500 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
-                                                    <span className="relative flex h-2 w-2">
-                                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
-                                                    </span>
-                                                    URL Detectada com Sucesso
+                                                <div className="flex items-center gap-3">
+                                                    <img
+                                                        src={formData.imageUrl}
+                                                        alt={formData.name || 'Imagem selecionada'}
+                                                        className="w-12 h-12 rounded-lg object-cover border border-gray-700 shrink-0"
+                                                    />
+                                                    <div className="flex items-center gap-2 text-[10px] text-green-500 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
+                                                        <span className="relative flex h-2 w-2">
+                                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                                                        </span>
+                                                        {selectedScryfallCard ? 'Card carregado do Scryfall' : 'Imagem atual'}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {scryfallWarning && (
+                                                <div className="flex items-center gap-2 text-[11px] text-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20">
+                                                    <AlertTriangle size={14} className="shrink-0" />
+                                                    {scryfallWarning}
                                                 </div>
                                             )}
                                         </div>

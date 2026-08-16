@@ -182,17 +182,17 @@ export const GamePage = () => {
                                     </button>
                                 </div>
 
-                                <div className={`absolute bottom-[10%] z-30 flex items-center gap-4 bg-gray-900/95 backdrop-blur-xl border ${
-                                    token.count > 0 ? 'border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)]' : 'border-gray-700'
-                                } rounded-xl p-2 px-3 transition-all transform translate-y-1/2`}>
-                                    <button onClick={() => adjustCount(token.id, -1)} className="w-8 h-8 rounded bg-gray-800 hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center active:scale-90 transition-colors">
-                                        <Minus size={18} />
+                                <div className={`mt-3 flex items-center gap-2 bg-gray-900/95 border ${
+                                    token.count > 0 ? 'border-purple-500/40' : 'border-gray-700'
+                                } rounded-full px-2 py-1 transition-all`}>
+                                    <button onClick={() => adjustCount(token.id, -1)} className="w-6 h-6 rounded-full bg-gray-800 hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center active:scale-90 transition-colors">
+                                        <Minus size={14} />
                                     </button>
-                                    <span className={`text-3xl font-bold min-w-[40px] text-center font-serif ${token.count > 0 ? 'text-white' : 'text-gray-600'}`}>
+                                    <span className={`text-base font-semibold min-w-[20px] text-center font-serif ${token.count > 0 ? 'text-white' : 'text-gray-600'}`}>
                                         {token.count}
                                     </span>
-                                    <button onClick={() => adjustCount(token.id, 1)} className="w-8 h-8 rounded bg-gray-800 hover:bg-green-500/20 hover:text-green-400 flex items-center justify-center active:scale-90 transition-colors">
-                                        <Plus size={18} />
+                                    <button onClick={() => adjustCount(token.id, 1)} className="w-6 h-6 rounded-full bg-gray-800 hover:bg-green-500/20 hover:text-green-400 flex items-center justify-center active:scale-90 transition-colors">
+                                        <Plus size={14} />
                                     </button>
                                 </div>
                             </motion.div>

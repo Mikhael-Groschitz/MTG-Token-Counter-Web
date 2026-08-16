@@ -2,6 +2,8 @@ import React from 'react';
 import { TokenData, TokenColor } from '@/types';
 import { Image as ImageIcon } from 'lucide-react';
 import { COLOR_IDENTITY_MAP, buildConicGradient } from '../constants/colorIdentities';
+import { renderTextWithSymbols } from '../utils/renderManaText';
+import { useManaSymbols } from '@/hooks/useManaSymbols';
 
 interface TokenCardProps {
     data: TokenData;
@@ -40,6 +42,7 @@ const textBoxBase = "border-[1px] border-[#8f9193] shadow-inner z-20 relative te
 export const TokenCard: React.FC<TokenCardProps> = ({ data, className = '' }) => {
     const isFullArt = data.layout === 'fullArt';
     const { className: frameClassName, style: frameStyle } = getFrameStyle(data);
+    const symbolMap = useManaSymbols();
 
     const barBackground = isFullArt ? "bg-[#EAECEE]/80 backdrop-blur-md" : "bg-[#EAECEE]";
 
@@ -95,7 +98,7 @@ export const TokenCard: React.FC<TokenCardProps> = ({ data, className = '' }) =>
                         <div className="h-full w-full overflow-hidden overflow-y-auto pr-1 scrollbar-none font-serif text-gray-900">
                             {data.abilities ? (
                                 data.abilities.split('\n').map((line, i) => (
-                                    <p key={i} className={i > 0 ? "mt-1" : ""}>{line}</p>
+                                    <p key={i} className={i > 0 ? "mt-1" : ""}>{renderTextWithSymbols(line, symbolMap)}</p>
                                 ))
                             ) : (
                                 <div className="h-full flex items-center justify-center italic text-gray-400 opacity-60 text-[10px]">
