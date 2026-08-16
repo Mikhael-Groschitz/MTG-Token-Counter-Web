@@ -13,6 +13,22 @@ export type MulticolorIdentity =
     // 5-color
     | 'fiveColor';
 
+export type PTCounterType =
+    | 'plus1plus1' | 'plus1plus0' | 'plus0plus1'
+    | 'minus1minus1' | 'minus1minus0' | 'minus0minus1';
+
+export type KeywordCounterType =
+    | 'deathtouch' | 'defender' | 'doubleStrike' | 'firstStrike'
+    | 'flying' | 'hexproof' | 'indestructible' | 'lifelink'
+    | 'menace' | 'reach' | 'trample' | 'vigilance'
+    | 'haste' | 'exalted' | 'shadow' | 'decayed'
+    | 'shield' | 'stun' | 'lore' | 'charge';
+
+export interface TokenCounters {
+    pt: Partial<Record<PTCounterType, number>>;
+    keyword: Partial<Record<KeywordCounterType, number>>;
+}
+
 export interface TokenData {
     id: string;
     name: string;
@@ -25,6 +41,7 @@ export interface TokenData {
     abilities?: string;
     count: number;
     layout?: TokenLayout;
+    counters?: TokenCounters;
 }
 
 export type AuthProvider = 'local' | 'google';

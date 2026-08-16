@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, Minus, RotateCcw, Swords, Trash2, Edit2 } from 'lucide-react';
+import { Plus, Minus, RotateCcw, Swords, Trash2, Edit2, Layers, Eraser } from 'lucide-react';
 import { TokenCard } from "@/features/battlefield/components/TokenCard";
 import { TokenModal } from "@/features/battlefield/components/TokenModal";
 import { LibraryPickModal } from "@/features/battlefield/components/LibraryPickModal";
-import { TokenData } from "@/types";
+import { TokenCountersModal } from "@/features/battlefield/components/TokenCountersModal";
+import { normalizeCounters } from "@/features/battlefield/utils/counters";
+import { TokenCounters, TokenData } from "@/types";
 import { useAuth } from '@/context/AuthContext';
 import { useTokens } from '@/hooks/useTokens';
 
@@ -17,7 +19,8 @@ export const GamePage = () => {
     const [activeTokens, setActiveTokens] = useState<TokenData[]>(() => {
         try {
             const saved = localStorage.getItem(STORAGE_KEY);
-            return saved ? JSON.parse(saved) : [];
+            const parsed: TokenData[] = saved ? JSON.parse(saved) : [];
+            return parsed.map(t => ({ ...t, counters: normalizeCounters(t.counters) }));
         } catch {
             return [];
         }
@@ -26,6 +29,8 @@ export const GamePage = () => {
     const [isPickModalOpen, setIsPickModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [editingToken, setEditingToken] = useState<TokenData | null>(null);
+    const [countersToken, setCountersToken] = useState<TokenData | null>(null);
+    const [isCountersModalOpen, setIsCountersModalOpen] = useState(false);
 
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(activeTokens));
@@ -51,8 +56,12 @@ export const GamePage = () => {
         if (confirm('Deseja remover todos os tokens da mesa?')) setActiveTokens([]);
     };
 
-    const resetCounters = () => {
+    const resetQuantities = () => {
         setActiveTokens(prev => prev.map(t => ({ ...t, count: 1 })));
+    };
+
+    const resetMarkers = () => {
+        setActiveTokens(prev => prev.map(t => ({ ...t, counters: normalizeCounters() })));
     };
 
     const handleAddFromLibrary = useCallback((token: TokenData) => {
@@ -67,7 +76,7 @@ export const GamePage = () => {
     const handleSaveToken = useCallback((token: TokenData) => {
         if (editingToken) {
             setActiveTokens(prev => prev.map(t =>
-                t.id === token.id ? { ...token, count: t.count } : t
+                t.id === token.id ? { ...token, count: t.count, counters: t.counters } : t
             ));
         } else {
             setActiveTokens(prev => [...prev, { ...token, id: `local_${Date.now()}`, count: 1 }]);
@@ -79,6 +88,16 @@ export const GamePage = () => {
     const openEditModal = useCallback((token: TokenData) => {
         setEditingToken(token);
         setIsCreateModalOpen(true);
+    }, []);
+
+    const openCountersModal = useCallback((token: TokenData) => {
+        setCountersToken(token);
+        setIsCountersModalOpen(true);
+    }, []);
+
+    const handleCountersChange = useCallback((tokenId: string, counters: TokenCounters) => {
+        setActiveTokens(prev => prev.map(t => t.id === tokenId ? { ...t, counters } : t));
+        setCountersToken(prev => prev?.id === tokenId ? { ...prev, counters } : prev);
     }, []);
 
     return (
@@ -101,12 +120,20 @@ export const GamePage = () => {
                     {activeTokens.length > 0 && (
                         <>
                             <button
-                                onClick={resetCounters}
+                                onClick={resetQuantities}
                                 className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-400 hover:text-purple-400 border border-gray-800 hover:border-purple-500/30 rounded-lg transition-all active:scale-95 bg-gray-900/50"
-                                title="Resetar contadores"
+                                title="Resetar quantidades"
                             >
                                 <RotateCcw size={16} />
-                                <span className="hidden sm:inline">Resetar Contadores</span>
+                                <span className="hidden sm:inline">Resetar Quantidades</span>
+                            </button>
+                            <button
+                                onClick={resetMarkers}
+                                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-400 hover:text-purple-400 border border-gray-800 hover:border-purple-500/30 rounded-lg transition-all active:scale-95 bg-gray-900/50"
+                                title="Resetar marcadores"
+                            >
+                                <Eraser size={16} />
+                                <span className="hidden sm:inline">Resetar Marcadores</span>
                             </button>
                             <button
                                 onClick={resetTable}
@@ -167,6 +194,13 @@ export const GamePage = () => {
 
                                 <div className="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all z-40">
                                     <button
+                                        onClick={() => openCountersModal(token)}
+                                        className="bg-gray-900 text-gray-500 hover:text-purple-400 hover:bg-white rounded-full p-2 shadow-md transition-all"
+                                        title="Marcadores"
+                                    >
+                                        <Layers size={16} />
+                                    </button>
+                                    <button
                                         onClick={() => openEditModal(token)}
                                         className="bg-gray-900 text-gray-500 hover:text-blue-400 hover:bg-white rounded-full p-2 shadow-md transition-all"
                                         title="Editar Token"
@@ -220,6 +254,13 @@ export const GamePage = () => {
                 onSave={handleSaveToken}
                 initialData={editingToken}
                 libraryTokenCount={libraryTokens.length}
+            />
+
+            <TokenCountersModal
+                isOpen={isCountersModalOpen}
+                onClose={() => { setIsCountersModalOpen(false); setCountersToken(null); }}
+                token={countersToken}
+                onChange={handleCountersChange}
             />
         </div>
     );

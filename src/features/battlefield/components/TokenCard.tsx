@@ -2,7 +2,9 @@ import React from 'react';
 import { TokenData, TokenColor } from '@/types';
 import { Image as ImageIcon } from 'lucide-react';
 import { COLOR_IDENTITY_MAP, buildConicGradient } from '../constants/colorIdentities';
+import { KEYWORD_COUNTER_DEFS } from '../constants/counters';
 import { renderTextWithSymbols } from '../utils/renderManaText';
+import { getEffectivePT, normalizeCounters } from '../utils/counters';
 import { useManaSymbols } from '@/hooks/useManaSymbols';
 
 interface TokenCardProps {
@@ -46,6 +48,42 @@ export const TokenCard: React.FC<TokenCardProps> = ({ data, className = '' }) =>
 
     const barBackground = isFullArt ? "bg-[#EAECEE]/80 backdrop-blur-md" : "bg-[#EAECEE]";
 
+    const counters = normalizeCounters(data.counters);
+    const effectivePT = getEffectivePT(data, counters.pt);
+    const activeKeywords = KEYWORD_COUNTER_DEFS.filter(def => (counters.keyword[def.id] ?? 0) > 0);
+    const showCounterOverlays = effectivePT.hasMod || activeKeywords.length > 0;
+
+    const countersOverlay = showCounterOverlays && (
+        <>
+            {effectivePT.hasMod && (
+                <div
+                    title={`Modificador líquido de P/R: ${effectivePT.netLabel}`}
+                    className={`absolute ${isFullArt ? 'top-9' : 'top-1'} left-1 z-[25] bg-black/70 rounded-full px-2 py-0.5 text-[10px] font-bold text-white`}
+                >
+                    {effectivePT.netLabel}
+                </div>
+            )}
+            {activeKeywords.length > 0 && (
+                <div className="absolute bottom-1 left-1 z-[25] flex flex-wrap gap-1 max-w-[calc(100%-8px)]">
+                    {activeKeywords.map(def => {
+                        const Icon = def.icon;
+                        const count = counters.keyword[def.id] ?? 0;
+                        return (
+                            <div key={def.id} title={def.label} className="relative bg-black/70 rounded-full p-1">
+                                <Icon size={12} className="text-white" />
+                                {count > 1 && (
+                                    <span className="absolute -top-1 -right-1 bg-purple-600 text-white text-[8px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">
+                                        {count}
+                                    </span>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+        </>
+    );
+
     return (
         <div className={`w-[280px] aspect-[2.5/3.5] rounded-[14px] bg-black p-[10px] shadow-2xl relative group transition-transform hover:scale-[1.02] ${className}`}>
 
@@ -59,6 +97,7 @@ export const TokenCard: React.FC<TokenCardProps> = ({ data, className = '' }) =>
                             className="w-full h-full object-cover object-top"
                         />
                         <div className="absolute inset-0 bg-black/10" />
+                        {countersOverlay}
                     </div>
                 )}
 
@@ -80,6 +119,7 @@ export const TokenCard: React.FC<TokenCardProps> = ({ data, className = '' }) =>
                                 <span className="text-[10px] mt-2 font-serif tracking-widest opacity-60">NO ART</span>
                             </div>
                         )}
+                        {countersOverlay}
                     </div>
                 )}
 
@@ -112,7 +152,7 @@ export const TokenCard: React.FC<TokenCardProps> = ({ data, className = '' }) =>
                 {(data.power || data.toughness) && (
                     <div className={`${barBackground} border-l-[1px] border-t-[1px] border-[#8f9193] rounded-tl-[8px] px-3 py-1 font-bold text-sm shadow-sm z-40 min-w-[50px] text-center text-black absolute bottom-[-1px] right-[-1px] 
                         ${isFullArt ? 'rounded-br-[4px]' : 'rounded-br-[2px]'}`}>
-                        {data.power || "0"}/{data.toughness || "0"}
+                        {effectivePT.displayPower}/{effectivePT.displayToughness}
                     </div>
                 )}
 

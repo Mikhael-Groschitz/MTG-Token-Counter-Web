@@ -15,9 +15,7 @@ interface TokenModalProps {
     onClose: () => void;
     onSave: (token: TokenData) => void;
     initialData?: TokenData | null;
-    /** Dashboard/biblioteca: sempre persiste no backend, sem exibir o toggle. */
     forceLibrarySave?: boolean;
-    /** Quantidade atual de tokens na biblioteca do usuário, para bloquear o toggle no limite. */
     libraryTokenCount?: number;
 }
 
