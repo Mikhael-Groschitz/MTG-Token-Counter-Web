@@ -1,17 +1,11 @@
 import { Link } from 'react-router-dom';
 import { ShieldCheck } from 'lucide-react';
-import { SEO } from '@/components/SEO';
 
 const LAST_UPDATED = '15 de agosto de 2026';
 
 export const PrivacyPolicyPage = () => {
     return (
         <div className="max-w-3xl mx-auto space-y-10 py-10">
-            <SEO
-                title="Política de Privacidade"
-                description="Entenda como o TokenForge trata seus dados pessoais."
-                path="/politica-de-privacidade"
-            />
             <header className="text-center space-y-4">
                 <div className="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto border border-purple-500/20">
                     <ShieldCheck className="w-8 h-8 text-purple-400" />

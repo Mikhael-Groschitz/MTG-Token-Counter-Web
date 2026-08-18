@@ -6,7 +6,6 @@ import { TokenModal } from '@/features/battlefield/components/TokenModal';
 import { TokenData } from '@/types';
 import { useTokens } from '@/hooks/useTokens';
 import { useAuth } from '@/context/AuthContext';
-import { SEO } from '@/components/SEO';
 
 const MAX_TOKENS = 5;
 
@@ -79,8 +78,6 @@ export const DashboardPage = () => {
 
     return (
         <div className="min-h-screen pt-4 pb-20">
-            <SEO title="Minha Biblioteca" description="Gerencie seus tokens salvos no TokenForge." path="/painel" noindex />
-
             <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b border-gray-800 pb-6">
                 <div>
                     <h1 className="text-3xl font-bold text-white">Minha Biblioteca</h1>

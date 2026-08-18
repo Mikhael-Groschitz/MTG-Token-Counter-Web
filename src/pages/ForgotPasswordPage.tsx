@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Mail, ArrowLeft, Loader2, CheckCircle, Send, Lock, AlertCircle } from 'lucide-react';
 import { authService } from '@/services/authService';
-import { SEO } from '@/components/SEO';
 
 export const ForgotPasswordPage = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -27,8 +26,6 @@ export const ForgotPasswordPage = () => {
 
     return (
         <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden rounded-3xl">
-            <SEO title="Esqueci Minha Senha" description="Recupere o acesso à sua conta TokenForge." path="/esqueci-senha" noindex />
-
             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px]" />
 

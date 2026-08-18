@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ShieldCheck, Loader2, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
 import { authService } from '@/services/authService';
-import { SEO } from '@/components/SEO';
 
 const RESEND_COOLDOWN = 60; // segundos
 
@@ -69,8 +68,6 @@ export const VerifyEmailPage = () => {
 
     return (
         <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden rounded-3xl">
-            <SEO title="Verificar E-mail" description="Verifique seu e-mail para ativar sua conta TokenForge." path="/verificar-email" noindex />
-
             {/* Blooms de fundo */}
             <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px]" />

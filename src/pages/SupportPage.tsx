@@ -1,14 +1,8 @@
 import { Heart, Github, MessageSquare, Share2 } from 'lucide-react';
-import { SEO } from '@/components/SEO';
 
 export const SupportPage = () => {
     return (
         <div className="max-w-4xl mx-auto space-y-12 py-10">
-            <SEO
-                title="Como Apoiar o Projeto"
-                description="Saiba como apoiar o desenvolvimento do TokenForge, um projeto de fã gratuito para Magic: The Gathering."
-                path="/apoiar"
-            />
             <header className="text-center space-y-4">
                 <h1 className="text-4xl font-bold text-white tracking-tight">Como Apoiar o <span className="text-purple-500">TokenForge</span></h1>
                 <p className="text-gray-400 text-lg">Este é um projeto feito de fã para fãs. Veja como você pode ajudar a manter o projeto vivo.</p>

@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { CardNavItem } from './ui/CardNav';
 import { useAuth } from '@/context/AuthContext';
+import { SEO } from './SEO';
 
 const CardNav = lazy(() => import('./ui/CardNav'));
 
@@ -9,10 +10,71 @@ interface LayoutProps {
     children: React.ReactNode;
 }
 
+// Keep in sync with the ROUTES map in middleware.ts (used for bot-facing
+// static previews) and with the routes registered in App.tsx.
+const SEO_ROUTES: Record<string, { title: string; description: string; noindex?: boolean }> = {
+    '/': {
+        title: 'Crie e Controle Tokens de Magic: The Gathering Grátis',
+        description: 'TokenForge é um contador de tokens gratuito e não oficial para Magic: The Gathering. Crie tokens personalizados, controle quantidades em tempo real e salve seus modelos favoritos.',
+    },
+    '/jogar': {
+        title: 'Mesa de Jogo',
+        description: 'Controle a quantidade dos seus tokens de Magic: The Gathering em tempo real, direto do navegador.',
+    },
+    '/entrar': {
+        title: 'Entrar',
+        description: 'Entre na sua conta TokenForge.',
+        noindex: true,
+    },
+    '/cadastro': {
+        title: 'Criar Conta',
+        description: 'Crie sua conta gratuita no TokenForge.',
+        noindex: true,
+    },
+    '/esqueci-senha': {
+        title: 'Esqueci Minha Senha',
+        description: 'Recupere o acesso à sua conta TokenForge.',
+        noindex: true,
+    },
+    '/redefinir-senha': {
+        title: 'Redefinir Senha',
+        description: 'Defina uma nova senha para sua conta TokenForge.',
+        noindex: true,
+    },
+    '/verificar-email': {
+        title: 'Verificar E-mail',
+        description: 'Verifique seu e-mail para ativar sua conta TokenForge.',
+        noindex: true,
+    },
+    '/painel': {
+        title: 'Minha Biblioteca',
+        description: 'Gerencie seus tokens salvos no TokenForge.',
+        noindex: true,
+    },
+    '/apoiar': {
+        title: 'Como Apoiar o Projeto',
+        description: 'Saiba como apoiar o desenvolvimento do TokenForge, um projeto de fã gratuito para Magic: The Gathering.',
+    },
+    '/reportar-bug': {
+        title: 'Reportar Bug',
+        description: 'Reporte um problema encontrado no TokenForge.',
+        noindex: true,
+    },
+    '/politica-de-privacidade': {
+        title: 'Política de Privacidade',
+        description: 'Entenda como o TokenForge trata seus dados pessoais.',
+    },
+    '/termos-de-uso': {
+        title: 'Termos de Uso',
+        description: 'Confira os termos de uso do TokenForge.',
+    },
+};
+
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
     const { isAuthenticated, logout } = useAuth();
     const { pathname } = useLocation();
     const isLanding = pathname === '/';
+    const seo = SEO_ROUTES[pathname];
 
     const navItems: CardNavItem[] = [
         {
@@ -57,6 +119,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
     return (
         <div className="min-h-screen flex flex-col bg-gray-950 text-gray-100 font-sans selection:bg-purple-500 selection:text-white">
+            {seo && <SEO path={pathname} title={seo.title} description={seo.description} noindex={seo.noindex} />}
+
             <a
                 href="#main-content"
                 className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-purple-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg"

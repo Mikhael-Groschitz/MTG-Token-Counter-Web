@@ -4,7 +4,6 @@ import { GoogleLogin } from '@react-oauth/google';
 import { motion } from 'motion/react';
 import { Lock, LogIn, Loader2, User, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { SEO } from '@/components/SEO';
 
 export const LoginPage = () => {
     const navigate = useNavigate();
@@ -36,7 +35,6 @@ export const LoginPage = () => {
 
     return (
         <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden rounded-3xl">
-            <SEO title="Entrar" description="Entre na sua conta TokenForge." path="/entrar" noindex />
             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px]" />
 

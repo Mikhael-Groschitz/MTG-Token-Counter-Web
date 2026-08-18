@@ -3,7 +3,6 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Lock, ArrowLeft, Loader2, CheckCircle, AlertCircle, KeyRound } from 'lucide-react';
 import { authService } from '@/services/authService';
-import { SEO } from '@/components/SEO';
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -49,7 +48,6 @@ export const ResetPasswordPage = () => {
 
     return (
         <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden rounded-3xl">
-            <SEO title="Redefinir Senha" description="Defina uma nova senha para sua conta TokenForge." path="/redefinir-senha" noindex />
             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px]" />
 

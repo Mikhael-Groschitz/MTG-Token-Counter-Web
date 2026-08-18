@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { TokenCard } from '@/features/battlefield/components/TokenCard';
 import { TokenData } from '@/types';
-import { SEO } from '@/components/SEO';
 
 const soldierToken: TokenData = {
     id: 'preview-soldier',
@@ -57,11 +56,6 @@ const zombieToken: TokenData = {
 export const LandingPage = () => {
     return (
         <div className="flex flex-col pb-20">
-            <SEO
-                title="Crie e Controle Tokens de Magic: The Gathering Grátis"
-                description="TokenForge é um contador de tokens gratuito e não oficial para Magic: The Gathering. Crie tokens personalizados, controle quantidades em tempo real e salve seus modelos favoritos."
-                path="/"
-            />
             <header className="max-w-7xl mx-auto w-full px-6 py-6 flex items-center justify-between">
                 <Link to="/" className="flex items-center gap-2">
                     <img src="/icons/icon-192.png" alt="Logo TokenForge" width={36} height={36} className="w-9 h-9" />

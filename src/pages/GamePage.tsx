@@ -9,7 +9,6 @@ import { normalizeCounters } from "@/features/battlefield/utils/counters";
 import { TokenCounters, TokenData } from "@/types";
 import { useAuth } from '@/context/AuthContext';
 import { useTokens } from '@/hooks/useTokens';
-import { SEO } from '@/components/SEO';
 
 const STORAGE_KEY = 'mtg_token_forge_mesa';
 
@@ -103,12 +102,6 @@ export const GamePage = () => {
 
     return (
         <div className="flex flex-col gap-8 pb-20 min-h-screen">
-            <SEO
-                title="Mesa de Jogo"
-                description="Controle a quantidade dos seus tokens de Magic: The Gathering em tempo real, direto do navegador."
-                path="/jogar"
-            />
-
             {/* Header */}
             <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 border-b border-gray-800 pb-6 sticky top-0 bg-gray-950/80 backdrop-blur-md z-40 py-4 px-4">
                 <div className="flex items-center gap-3">
