@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, Minus, RotateCcw, Swords, Trash2, Edit2, Layers, Eraser } from 'lucide-react';
+import { Plus, Minus, RotateCcw, Swords, Trash2, Edit2, Layers, Eraser, Trash } from 'lucide-react';
 import { TokenCard } from "@/features/battlefield/components/TokenCard";
 import { TokenModal } from "@/features/battlefield/components/TokenModal";
 import { LibraryPickModal } from "@/features/battlefield/components/LibraryPickModal";
@@ -52,16 +52,16 @@ export const GamePage = () => {
         setActiveTokens(prev => prev.filter(t => t.id !== id));
     }, []);
 
-    const resetTable = () => {
-        if (confirm('Deseja remover todos os tokens da mesa?')) setActiveTokens([]);
-    };
-
     const resetQuantities = () => {
         setActiveTokens(prev => prev.map(t => ({ ...t, count: 1 })));
     };
 
     const resetMarkers = () => {
         setActiveTokens(prev => prev.map(t => ({ ...t, counters: normalizeCounters() })));
+    };
+
+    const resetTable = () => {
+        setActiveTokens([]);
     };
 
     const handleAddFromLibrary = useCallback((token: TokenData) => {
@@ -100,133 +100,117 @@ export const GamePage = () => {
         setCountersToken(prev => prev?.id === tokenId ? { ...prev, counters } : prev);
     }, []);
 
+    const utilityButton =
+        'flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-500 hover:text-purple-400 rounded-md transition-colors active:scale-95';
+
     return (
-        <div className="flex flex-col gap-8 pb-20 min-h-screen">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 border-b border-gray-800 pb-6 sticky top-0 bg-gray-950/80 backdrop-blur-md z-40 py-4 px-4">
-                <div className="flex items-center gap-3">
-                    <Swords className="text-purple-500" size={32} />
-                    <div>
-                        <h1 className="text-2xl font-bold text-white leading-none">Mesa de Jogo</h1>
+        <div className="flex flex-col min-h-screen pb-24">
+            {/* Barra da mesa: contagem como placar tipográfico, ações agrupadas à direita */}
+            <div className="sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md border-b border-gray-900">
+                <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-3">
+                    <div className="flex items-baseline gap-3">
+                        <Swords className="text-purple-500 self-center" size={18} />
+                        <span className="text-2xl font-bold text-white leading-none tabular-nums">{totalOnField}</span>
                         <span className="text-xs text-gray-500">
-                            {activeTokens.length} {activeTokens.length === 1 ? 'tipo' : 'tipos'} —{' '}
-                            <span className="text-purple-400 font-medium">{totalOnField} em campo</span>
+                            em campo · {activeTokens.length} {activeTokens.length === 1 ? 'tipo' : 'tipos'}
                         </span>
                     </div>
-                </div>
 
-                <div className="flex flex-wrap gap-2 w-full md:w-auto">
-                    {activeTokens.length > 0 && (
-                        <>
-                            <button
-                                onClick={resetQuantities}
-                                className="flex flex-1 sm:flex-none items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-gray-400 hover:text-purple-400 border border-gray-800 hover:border-purple-500/30 rounded-lg transition-all active:scale-95 bg-gray-900/50"
-                                title="Resetar quantidades"
-                            >
-                                <RotateCcw size={16} />
-                                <span className="hidden sm:inline">Resetar Quantidades</span>
-                            </button>
-                            <button
-                                onClick={resetMarkers}
-                                className="flex flex-1 sm:flex-none items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-gray-400 hover:text-purple-400 border border-gray-800 hover:border-purple-500/30 rounded-lg transition-all active:scale-95 bg-gray-900/50"
-                                title="Resetar marcadores"
-                            >
-                                <Eraser size={16} />
-                                <span className="hidden sm:inline">Resetar Marcadores</span>
-                            </button>
-                            <button
-                                onClick={resetTable}
-                                className="flex flex-1 sm:flex-none items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-gray-400 hover:text-red-400 border border-gray-800 hover:border-red-500/30 rounded-lg transition-all active:scale-95 bg-gray-900/50"
-                                title="Limpar Mesa"
-                            >
-                                <Trash2 size={16} />
-                                <span className="hidden sm:inline">Limpar Mesa</span>
-                            </button>
-                        </>
-                    )}
-                    <button
-                        onClick={() => { setEditingToken(null); setIsPickModalOpen(true); }}
-                        className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2 shadow-lg shadow-purple-900/20 transition-all active:scale-95 w-full sm:w-auto"
-                    >
-                        <Plus size={20} /> Adicionar Token
-                    </button>
+                    <div className="flex items-center gap-1 ml-auto">
+                        {activeTokens.length > 0 && (
+                            <>
+                                <button onClick={resetQuantities} className={utilityButton} title="Resetar quantidades">
+                                    <RotateCcw size={15} />
+                                    <span className="hidden sm:inline">Quantidades</span>
+                                </button>
+                                <button onClick={resetMarkers} className={utilityButton} title="Resetar marcadores">
+                                    <Eraser size={15} />
+                                    <span className="hidden sm:inline">Marcadores</span>
+                                </button>
+                                <button onClick={resetTable} className={utilityButton} title="Limpar Mesa">
+                                    <Trash size={15} />
+                                    <span className="hidden sm:inline">Limpar Mesa</span>
+                                </button>    
+                            </>
+                        )}
+                        <button
+                            onClick={() => { setEditingToken(null); setIsPickModalOpen(true); }}
+                            className="bg-purple-600 hover:bg-purple-500 text-white text-sm px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors active:scale-95"
+                        >
+                            <Plus size={17} /> Adicionar token
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* Área da Mesa */}
             {activeTokens.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-center min-h-[50vh] text-center border-2 border-dashed border-gray-800 rounded-3xl m-4">
-                    <div className="w-24 h-24 bg-gray-900 rounded-full flex items-center justify-center mb-6">
-                        <Swords className="text-gray-700" size={48} />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-300 mb-2">A Mesa está Vazia</h2>
-                    <p className="text-gray-500 max-w-md mb-8">
-                        Adicione tokens para começar a batalha.
-                        {!isAuthenticated && (
-                            <span className="block text-purple-400 text-sm mt-2">
-                                Faça login para salvar até 5 tokens favoritos.
-                            </span>
-                        )}
+                <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-24">
+                    <p className="text-xs uppercase tracking-[0.22em] text-gray-600 mb-4">Mesa vazia</p>
+                    <h2 className="text-2xl font-bold text-white tracking-tight">Nada em campo ainda</h2>
+                    <p className="text-gray-500 max-w-sm mt-3">
+                        Adicione um token da sua biblioteca ou crie um na hora.
                     </p>
                     <button
                         onClick={() => { setEditingToken(null); setIsPickModalOpen(true); }}
-                        className="text-white bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-xl font-semibold transition-all"
+                        className="mt-8 inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white px-5 py-3 rounded-lg font-semibold transition-colors"
                     >
-                        Adicionar Token
+                        <Plus size={17} /> Adicionar token
                     </button>
+                    {!isAuthenticated && (
+                        <p className="text-xs text-gray-600 mt-6">
+                            Com conta você salva até 5 tokens favoritos.
+                        </p>
+                    )}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center px-4">
+                <div className="max-w-7xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 justify-items-center px-4 pt-10">
                     <AnimatePresence>
                         {activeTokens.map(token => (
                             <motion.div
                                 key={token.id}
                                 layout
-                                initial={{ opacity: 0, scale: 0.8 }}
+                                initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.8 }}
-                                className="relative flex flex-col items-center group"
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="flex flex-col items-center w-full max-w-[300px]"
                             >
                                 <div className={`transition-all duration-300 ${token.count === 0 ? 'opacity-50 grayscale' : ''}`}>
                                     <TokenCard data={token} className="shadow-2xl" />
                                 </div>
 
-                                <div className="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all z-40">
-                                    <button
-                                        onClick={() => openCountersModal(token)}
-                                        className="bg-gray-900 text-gray-500 hover:text-purple-400 hover:bg-white rounded-full p-2 shadow-md transition-all"
-                                        title="Marcadores"
-                                    >
-                                        <Layers size={16} />
-                                    </button>
-                                    <button
-                                        onClick={() => openEditModal(token)}
-                                        className="bg-gray-900 text-gray-500 hover:text-blue-400 hover:bg-white rounded-full p-2 shadow-md transition-all"
-                                        title="Editar Token"
-                                    >
-                                        <Edit2 size={16} />
-                                    </button>
-                                    <button
-                                        onClick={() => removeToken(token.id)}
-                                        className="bg-gray-900 text-gray-500 hover:text-red-500 hover:bg-white rounded-full p-2 shadow-md transition-all"
-                                        title="Remover da Mesa"
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                </div>
+                                {/* Controles em uma barra única sob o token: contador à esquerda, ações à direita */}
+                                <div className="mt-3 w-full flex items-center justify-between gap-2 border-t border-gray-900 pt-3">
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => adjustCount(token.id, -1)}
+                                            className="w-7 h-7 rounded-md border border-gray-800 text-gray-400 hover:text-red-400 hover:border-red-500/40 flex items-center justify-center active:scale-90 transition-colors"
+                                            aria-label="Remover uma cópia"
+                                        >
+                                            <Minus size={14} />
+                                        </button>
+                                        <span className={`text-lg font-semibold tabular-nums min-w-[22px] text-center ${token.count > 0 ? 'text-white' : 'text-gray-600'}`}>
+                                            {token.count}
+                                        </span>
+                                        <button
+                                            onClick={() => adjustCount(token.id, 1)}
+                                            className="w-7 h-7 rounded-md border border-gray-800 text-gray-400 hover:text-green-400 hover:border-green-500/40 flex items-center justify-center active:scale-90 transition-colors"
+                                            aria-label="Adicionar uma cópia"
+                                        >
+                                            <Plus size={14} />
+                                        </button>
+                                    </div>
 
-                                <div className={`mt-3 flex items-center gap-2 bg-gray-900/95 border ${
-                                    token.count > 0 ? 'border-purple-500/40' : 'border-gray-700'
-                                } rounded-full px-2 py-1 transition-all`}>
-                                    <button onClick={() => adjustCount(token.id, -1)} className="w-6 h-6 rounded-full bg-gray-800 hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center active:scale-90 transition-colors">
-                                        <Minus size={14} />
-                                    </button>
-                                    <span className={`text-base font-semibold min-w-[20px] text-center font-serif ${token.count > 0 ? 'text-white' : 'text-gray-600'}`}>
-                                        {token.count}
-                                    </span>
-                                    <button onClick={() => adjustCount(token.id, 1)} className="w-6 h-6 rounded-full bg-gray-800 hover:bg-green-500/20 hover:text-green-400 flex items-center justify-center active:scale-90 transition-colors">
-                                        <Plus size={14} />
-                                    </button>
+                                    <div className="flex items-center gap-0.5">
+                                        <button onClick={() => openCountersModal(token)} className="p-1.5 rounded-md text-gray-600 hover:text-purple-400 hover:bg-gray-900 transition-colors" title="Marcadores">
+                                            <Layers size={15} />
+                                        </button>
+                                        <button onClick={() => openEditModal(token)} className="p-1.5 rounded-md text-gray-600 hover:text-blue-400 hover:bg-gray-900 transition-colors" title="Editar token">
+                                            <Edit2 size={15} />
+                                        </button>
+                                        <button onClick={() => removeToken(token.id)} className="p-1.5 rounded-md text-gray-600 hover:text-red-400 hover:bg-gray-900 transition-colors" title="Remover da mesa">
+                                            <Trash2 size={15} />
+                                        </button>
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}

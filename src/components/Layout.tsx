@@ -10,8 +10,6 @@ interface LayoutProps {
     children: React.ReactNode;
 }
 
-// Keep in sync with the ROUTES map in middleware.ts (used for bot-facing
-// static previews) and with the routes registered in App.tsx.
 const SEO_ROUTES: Record<string, { title: string; description: string; noindex?: boolean }> = {
     '/': {
         title: 'Crie e Controle Tokens de Magic: The Gathering Grátis',

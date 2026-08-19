@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Plus, Settings, LayoutGrid, Trash2, Edit, User, LogOut, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { Plus, Settings, LayoutGrid, Trash2, Edit, LogOut, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import { TokenCard } from '@/features/battlefield/components/TokenCard';
 import { TokenModal } from '@/features/battlefield/components/TokenModal';
 import { TokenData } from '@/types';
@@ -8,6 +8,9 @@ import { useTokens } from '@/hooks/useTokens';
 import { useAuth } from '@/context/AuthContext';
 
 const MAX_TOKENS = 5;
+
+const fieldClass =
+    'w-full bg-gray-950/60 border border-gray-800 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors';
 
 export const DashboardPage = () => {
     const { user, logout, updateProfile } = useAuth();
@@ -76,177 +79,171 @@ export const DashboardPage = () => {
         }
     };
 
+    const tabClass = (tab: 'tokens' | 'settings') =>
+        `pb-3 -mb-px flex items-center gap-2 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === tab
+                ? 'border-purple-500 text-white'
+                : 'border-transparent text-gray-500 hover:text-gray-300'
+        }`;
+
     return (
-        <div className="min-h-screen pt-4 pb-20">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b border-gray-800 pb-6">
-                <div>
-                    <h1 className="text-3xl font-bold text-white">Minha Biblioteca</h1>
-                    <p className="text-gray-400">Gerencie seus modelos de tokens para usar nas partidas.</p>
-                </div>
-                <div className="bg-gray-900 p-1 rounded-lg flex gap-1 border border-gray-800">
-                    <button
-                        onClick={() => setActiveTab('tokens')}
-                        className={`px-4 py-2 rounded-md flex items-center gap-2 transition-all font-medium ${activeTab === 'tokens' ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
-                    >
-                        <LayoutGrid size={18} /> Tokens Salvos
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('settings')}
-                        className={`px-4 py-2 rounded-md flex items-center gap-2 transition-all font-medium ${activeTab === 'settings' ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
-                    >
-                        <Settings size={18} /> Minha Conta
-                    </button>
-                </div>
-            </div>
-
-            {activeTab === 'tokens' ? (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-
-                    {/* Indicador de limite */}
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <div className="flex gap-1">
-                                {Array.from({ length: MAX_TOKENS }).map((_, i) => (
-                                    <div key={i} className={`w-3 h-3 rounded-full transition-colors ${i < libraryTokens.length ? 'bg-purple-500' : 'bg-gray-700'}`} />
-                                ))}
-                            </div>
-                            <span className="text-sm text-gray-400">{libraryTokens.length}/{MAX_TOKENS} tokens salvos</span>
-                        </div>
-                        {hasReachedLimit && (
-                            <span className="text-xs text-amber-400 bg-amber-400/10 border border-amber-400/20 px-3 py-1 rounded-full">
-                                Limite atingido
-                            </span>
-                        )}
+        <div className="min-h-screen max-w-6xl mx-auto px-4 pt-8 pb-24">
+            {/* Cabeçalho: título + estado da biblioteca na mesma linha, abas como navegação real */}
+            <header className="flex flex-col gap-6">
+                <div className="flex flex-wrap items-end justify-between gap-4">
+                    <div className="border-l-2 border-purple-500 pl-5">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-purple-400">
+                            {user?.username ?? 'Sua conta'}
+                        </span>
+                        <h1 className="text-3xl font-bold text-white tracking-tight mt-1.5">Minha biblioteca</h1>
                     </div>
 
-                    {/* Botão criar */}
-                    <button
-                        onClick={openCreate}
-                        disabled={hasReachedLimit || isMutating}
-                        className="w-full md:w-auto bg-gray-800/50 hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed border-2 border-dashed border-gray-700 hover:border-purple-500 disabled:hover:border-gray-700 text-gray-400 hover:text-purple-400 disabled:hover:text-gray-400 py-6 px-12 rounded-2xl flex flex-col md:flex-row items-center justify-center gap-4 transition-all group"
-                    >
-                        <div className="bg-gray-700 group-hover:bg-purple-500/20 p-3 rounded-full transition-colors">
-                            <Plus size={24} />
+                    <div className="flex items-center gap-3 text-sm">
+                        <div className="flex gap-1" aria-hidden>
+                            {Array.from({ length: MAX_TOKENS }).map((_, i) => (
+                                <span key={i} className={`w-6 h-0.5 ${i < libraryTokens.length ? 'bg-purple-500' : 'bg-gray-800'}`} />
+                            ))}
                         </div>
-                        <div className="text-left">
-                            <span className="font-semibold text-lg block">Criar Novo Modelo de Token</span>
-                            {hasReachedLimit && <span className="text-xs text-amber-400">Remova um token para criar um novo</span>}
-                        </div>
-                    </button>
+                        <span className="text-gray-400 font-mono text-xs">
+                            {libraryTokens.length}/{MAX_TOKENS}
+                        </span>
+                        {hasReachedLimit && <span className="text-xs text-amber-400">limite atingido</span>}
+                    </div>
+                </div>
 
-                    {/* Erros */}
+                <nav className="flex gap-6 border-b border-gray-900">
+                    <button onClick={() => setActiveTab('tokens')} className={tabClass('tokens')}>
+                        <LayoutGrid size={16} /> Tokens salvos
+                    </button>
+                    <button onClick={() => setActiveTab('settings')} className={tabClass('settings')}>
+                        <Settings size={16} /> Minha conta
+                    </button>
+                </nav>
+            </header>
+
+            {activeTab === 'tokens' ? (
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="mt-8 space-y-6">
+                    <div className="flex items-center justify-between gap-4">
+                        <p className="text-sm text-gray-500">
+                            Modelos salvos ficam disponíveis em qualquer mesa.
+                        </p>
+                        <button
+                            onClick={openCreate}
+                            disabled={hasReachedLimit || isMutating}
+                            className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
+                        >
+                            <Plus size={16} /> Novo token
+                        </button>
+                    </div>
+
                     {deleteError && (
-                        <div className="flex items-center gap-2 text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm">
-                            <AlertCircle size={16} className="shrink-0" /> {deleteError}
-                        </div>
+                        <p className="flex items-center gap-2 text-red-400 text-sm border-l-2 border-red-500/60 pl-3">
+                            <AlertCircle size={15} className="shrink-0" /> {deleteError}
+                        </p>
                     )}
                     {error && !deleteError && (
-                        <div className="flex items-center gap-2 text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm">
-                            <AlertCircle size={16} className="shrink-0" /> {error}
-                            <button onClick={() => void fetchTokens()} className="ml-auto underline text-xs">Tentar novamente</button>
-                        </div>
+                        <p className="flex items-center gap-2 text-red-400 text-sm border-l-2 border-red-500/60 pl-3">
+                            <AlertCircle size={15} className="shrink-0" /> {error}
+                            <button onClick={() => void fetchTokens()} className="ml-2 underline text-xs">Tentar novamente</button>
+                        </p>
                     )}
 
-                    {/* Lista */}
                     {loading ? (
-                        <div className="flex flex-col items-center py-20 text-purple-500">
-                            <Loader2 className="animate-spin mb-2" size={32} />
-                            <p className="text-xs uppercase tracking-widest opacity-50">Sincronizando biblioteca...</p>
+                        <div className="flex items-center gap-2 py-20 justify-center text-gray-500 text-sm">
+                            <Loader2 className="animate-spin" size={18} /> Sincronizando biblioteca...
                         </div>
                     ) : libraryTokens.length === 0 ? (
-                        <div className="text-center py-20 text-gray-500">
-                            Sua biblioteca está vazia. Crie um token para começar!
+                        <div className="border border-gray-900 rounded-xl py-16 px-6 text-center">
+                            <p className="text-gray-400">Sua biblioteca está vazia.</p>
+                            <button onClick={openCreate} className="text-purple-400 hover:text-purple-300 text-sm font-medium mt-2 transition-colors">
+                                Criar o primeiro token
+                            </button>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center pt-2">
                             {libraryTokens.map(token => (
-                                <div key={token.id} className="group relative flex flex-col items-center w-full max-w-[300px]">
-                                    <div className="transform transition-transform group-hover:scale-[1.02] duration-300 w-full">
-                                        <TokenCard data={token} className="shadow-xl brightness-90 group-hover:brightness-100 transition-all" />
-                                    </div>
-                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px] rounded-[18px]">
-                                        <div className="flex gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                            <button onClick={() => openEdit(token)} className="bg-white text-gray-900 hover:bg-blue-50 px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow-lg">
-                                                <Edit size={16} /> Editar
-                                            </button>
-                                            <button onClick={() => handleDeleteToken(token.id)} disabled={isMutating} className="bg-red-500 text-white hover:bg-red-600 disabled:opacity-50 px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow-lg">
-                                                <Trash2 size={16} /> Excluir
-                                            </button>
-                                        </div>
+                                <div key={token.id} className="flex flex-col items-center w-full max-w-[300px]">
+                                    <TokenCard data={token} className="shadow-xl" />
+                                    {/* Ações sempre visíveis, logo abaixo do token — sem overlay no hover */}
+                                    <div className="flex items-center gap-1 mt-3 text-xs">
+                                        <button
+                                            onClick={() => openEdit(token)}
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-gray-400 hover:text-white hover:bg-gray-900 transition-colors"
+                                        >
+                                            <Edit size={14} /> Editar
+                                        </button>
+                                        <span className="w-px h-4 bg-gray-800" />
+                                        <button
+                                            onClick={() => handleDeleteToken(token.id)}
+                                            disabled={isMutating}
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-gray-500 hover:text-red-400 hover:bg-red-500/10 disabled:opacity-50 transition-colors"
+                                        >
+                                            <Trash2 size={14} /> Excluir
+                                        </button>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     )}
                 </motion.div>
-
             ) : (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="max-w-3xl mx-auto">
-                    <div className="bg-gray-900/50 border border-gray-800 rounded-3xl p-8 shadow-xl backdrop-blur-sm">
-                        <div className="flex items-center gap-6 mb-8 pb-8 border-b border-gray-800">
-                            <div className="w-20 h-20 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
-                                <User className="w-10 h-10 text-white" />
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="mt-8 max-w-2xl">
+                    <form className="space-y-10" onSubmit={handleSaveSettings}>
+                        <section className="space-y-4">
+                            <h2 className="text-xs uppercase tracking-[0.2em] text-gray-500">Perfil</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label htmlFor="dash-username" className="text-xs text-gray-400">Nome de usuário</label>
+                                    <input id="dash-username" type="text" value={username} onChange={e => setUsername(e.target.value)} className={fieldClass} />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label htmlFor="dash-email" className="text-xs text-gray-400">Email</label>
+                                    <input id="dash-email" type="email" value={user?.email ?? ''} disabled className={`${fieldClass} text-gray-500 cursor-not-allowed`} />
+                                    <p className="text-[11px] text-gray-600">O email não pode ser alterado.</p>
+                                </div>
                             </div>
-                            <div>
-                                <h2 className="text-2xl font-bold text-white">Configurações de Perfil</h2>
-                                <p className="text-gray-400">{user?.email}</p>
-                            </div>
+                        </section>
+
+                        {user?.provider === 'local' && (
+                            <section className="space-y-4">
+                                <h2 className="text-xs uppercase tracking-[0.2em] text-gray-500">Segurança</h2>
+                                <div className="space-y-1.5">
+                                    <label htmlFor="dash-current-password" className="text-xs text-gray-400">Senha atual</label>
+                                    <input id="dash-current-password" type="password" placeholder="••••••••" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className={fieldClass} />
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label htmlFor="dash-new-password" className="text-xs text-gray-400">Nova senha</label>
+                                        <input id="dash-new-password" type="password" placeholder="••••••••" value={newPassword} onChange={e => setNewPassword(e.target.value)} className={fieldClass} />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label htmlFor="dash-confirm-password" className="text-xs text-gray-400">Confirmar senha</label>
+                                        <input id="dash-confirm-password" type="password" placeholder="••••••••" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className={fieldClass} />
+                                    </div>
+                                </div>
+                            </section>
+                        )}
+
+                        {settingsError && (
+                            <p className="flex items-center gap-2 text-red-400 text-sm border-l-2 border-red-500/60 pl-3">
+                                <AlertCircle size={15} className="shrink-0" /> {settingsError}
+                            </p>
+                        )}
+                        {settingsSuccess && (
+                            <p className="flex items-center gap-2 text-emerald-400 text-sm border-l-2 border-emerald-500/60 pl-3">
+                                <CheckCircle size={15} className="shrink-0" /> Perfil atualizado com sucesso.
+                            </p>
+                        )}
+
+                        <div className="flex items-center justify-between border-t border-gray-900 pt-6">
+                            <button type="button" onClick={logout} className="text-sm text-gray-500 hover:text-red-400 flex items-center gap-2 transition-colors">
+                                <LogOut size={15} /> Sair da conta
+                            </button>
+                            <button type="submit" disabled={isSavingSettings} className="bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold py-2.5 px-6 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2">
+                                {isSavingSettings ? <Loader2 className="animate-spin" size={16} /> : 'Salvar alterações'}
+                            </button>
                         </div>
-
-                        <form className="space-y-8" onSubmit={handleSaveSettings}>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label htmlFor="dash-username" className="text-sm font-medium text-gray-400">Nome de Usuário</label>
-                                    <input id="dash-username" type="text" value={username} onChange={e => setUsername(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all" />
-                                </div>
-                                <div className="space-y-2">
-                                    <label htmlFor="dash-email" className="text-sm font-medium text-gray-400">Email</label>
-                                    <input id="dash-email" type="email" value={user?.email ?? ''} disabled className="w-full bg-gray-950/50 border border-gray-800 rounded-xl px-4 py-3 text-gray-500 cursor-not-allowed" />
-                                    <p className="text-xs text-gray-600">O email não pode ser alterado.</p>
-                                </div>
-                            </div>
-
-                            {user?.provider === 'local' && (
-                                <div className="space-y-4 pt-4">
-                                    <h3 className="text-lg font-semibold text-white border-l-4 border-purple-500 pl-3">Segurança</h3>
-                                    <div className="space-y-2">
-                                        <label htmlFor="dash-current-password" className="text-sm font-medium text-gray-400">Senha Atual</label>
-                                        <input id="dash-current-password" type="password" placeholder="••••••••" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <label htmlFor="dash-new-password" className="text-sm font-medium text-gray-400">Nova Senha</label>
-                                            <input id="dash-new-password" type="password" placeholder="••••••••" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label htmlFor="dash-confirm-password" className="text-sm font-medium text-gray-400">Confirmar Senha</label>
-                                            <input id="dash-confirm-password" type="password" placeholder="••••••••" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 outline-none transition-all" />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {settingsError && (
-                                <div className="flex items-center gap-2 text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm">
-                                    <AlertCircle size={16} className="shrink-0" /> {settingsError}
-                                </div>
-                            )}
-                            {settingsSuccess && (
-                                <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 text-sm">
-                                    <CheckCircle size={16} className="shrink-0" /> Perfil atualizado com sucesso.
-                                </div>
-                            )}
-
-                            <div className="flex justify-between items-center pt-8 border-t border-gray-800">
-                                <button type="button" onClick={logout} className="text-red-400 hover:text-red-300 text-sm font-medium flex items-center gap-2 px-4 py-2 hover:bg-red-500/10 rounded-lg transition-colors">
-                                    <LogOut size={16} /> Sair da Conta
-                                </button>
-                                <button type="submit" disabled={isSavingSettings} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-purple-900/20 transition-all hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2">
-                                    {isSavingSettings ? <Loader2 className="animate-spin" size={18} /> : 'Salvar Alterações'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                    </form>
                 </motion.div>
             )}
 

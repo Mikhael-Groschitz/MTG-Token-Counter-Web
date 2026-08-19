@@ -1,16 +1,12 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { Bug, Check, Paperclip, X } from "lucide-react";
 
 type Severity = "low" | "medium" | "high" | "critical";
 
 interface SeverityOption {
     value: Severity;
     label: string;
-}
-
-interface SeverityStyle {
-    active: string;
-    idle: string;
 }
 
 interface FormState {
@@ -39,40 +35,49 @@ const SEVERITIES: SeverityOption[] = [
     { value: "critical", label: "Crítica" },
 ];
 
-const MODULES: string[] = [
-    "Mesa de jogo",
-    "Acesso/Perfil",
-    "Tokens",
-    "Outro",
-];
+const MODULES: string[] = ["Mesa de jogo", "Acesso/Perfil", "Tokens", "Outro"];
 
-const severityStyles: Record<Severity, SeverityStyle> = {
-    low: {
-        active: "bg-green-500/20 border-green-500 text-green-400",
-        idle: "bg-white/5 border-white/10 text-white/40 hover:border-white/25 hover:text-white/60",
-    },
-    medium: {
-        active: "bg-amber-500/20 border-amber-400 text-amber-300",
-        idle: "bg-white/5 border-white/10 text-white/40 hover:border-white/25 hover:text-white/60",
-    },
-    high: {
-        active: "bg-orange-500/20 border-orange-400 text-orange-300",
-        idle: "bg-white/5 border-white/10 text-white/40 hover:border-white/25 hover:text-white/60",
-    },
-    critical: {
-        active: "bg-red-500/20 border-red-400 text-red-300",
-        idle: "bg-white/5 border-white/10 text-white/40 hover:border-white/25 hover:text-white/60",
-    },
+/** Severidade sem 4 caixas coloridas: um seletor sóbrio com um ponto de cor. */
+const severityDot: Record<Severity, string> = {
+    low: "bg-green-400",
+    medium: "bg-amber-400",
+    high: "bg-orange-400",
+    critical: "bg-red-400",
 };
 
 const inputClass =
-    "w-full px-3 py-2 text-sm rounded-lg text-white placeholder-white/30 " +
-    "bg-[#1e1e3a] border border-white/15 " +
-    "focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500/60 " +
-    "transition-colors";
+    "w-full bg-gray-950/60 border border-gray-800 text-gray-100 rounded-lg py-2.5 px-3.5 text-sm " +
+    "focus:outline-none focus:border-purple-500 transition-colors placeholder:text-gray-700";
 
-const labelClass =
-    "block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wide";
+const labelClass = "block text-xs font-medium text-gray-400 mb-1.5";
+
+/** Linha de campo: rótulo à esquerda, controle à direita, separada por régua. */
+function Row({
+    label,
+    htmlFor,
+    required,
+    hint,
+    children,
+}: {
+    label: string;
+    htmlFor?: string;
+    required?: boolean;
+    hint?: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-6 border-t border-gray-900 pt-5">
+            <div className="sm:pt-2">
+                <label htmlFor={htmlFor} className={labelClass}>
+                    {label}
+                    {required && <span className="text-purple-400"> *</span>}
+                </label>
+                {hint && <p className="text-xs text-gray-600 leading-relaxed hidden sm:block">{hint}</p>}
+            </div>
+            <div className="sm:col-span-2">{children}</div>
+        </div>
+    );
+}
 
 export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps) {
     const { isAuthenticated } = useAuth();
@@ -131,14 +136,12 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
 
     if (submitted) {
         return (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="w-12 h-12 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center mb-4">
-                    <CheckIcon className="w-6 h-6 text-green-400" />
-                </div>
-                <h3 className="text-lg font-medium text-white mb-1">
-                    Bug reportado com sucesso!
-                </h3>
-                <p className="text-sm text-white/50">
+            <div className="border-l-2 border-green-500 pl-5 py-2">
+                <span className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-green-400">
+                    <Check size={13} /> Enviado
+                </span>
+                <h3 className="text-xl font-bold text-white tracking-tight mt-2">Report registrado</h3>
+                <p className="text-sm text-gray-400 mt-2 max-w-md leading-relaxed">
                     Recebemos seu report por e-mail e vamos analisar o problema em breve.
                 </p>
             </div>
@@ -146,24 +149,19 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-5 max-w-xl w-full">
-            <div>
-                <div className="flex items-center gap-2.5 mb-1">
-                    <div className="w-7 h-7 bg-red-500/20 border border-red-500/30 rounded-md flex items-center justify-center">
-                        <BugIcon className="w-4 h-4 text-red-400" />
-                    </div>
-                    <h2 className="text-lg font-medium text-white">Reportar um bug</h2>
+        <form onSubmit={handleSubmit} className="w-full">
+            <div className="flex items-baseline gap-2.5 mb-6">
+                <Bug className="w-4 h-4 text-purple-400 translate-y-0.5" />
+                <div>
+                    <h2 className="text-base font-semibold text-white">Detalhes do problema</h2>
+                    <p className="text-sm text-gray-500 mt-1">
+                        Campos marcados com <span className="text-purple-400">*</span> são obrigatórios.
+                    </p>
                 </div>
-                <p className="text-sm text-white/50">
-                    Descreva o problema encontrado para que nossa equipe possa investigar.
-                </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label htmlFor="bug-title" className={labelClass}>
-                        Título <span className="text-red-400">*</span>
-                    </label>
+            <div className="space-y-5">
+                <Row label="Título" htmlFor="bug-title" required hint="Uma frase que resuma o bug.">
                     <input
                         id="bug-title"
                         type="text"
@@ -171,12 +169,12 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                         value={form.title}
                         onChange={handleChange}
                         required
-                        placeholder="Breve descrição do bug"
+                        placeholder="Ex.: token some da mesa ao recarregar"
                         className={inputClass}
                     />
-                </div>
-                <div>
-                    <label htmlFor="bug-module" className={labelClass}>Módulo / Área</label>
+                </Row>
+
+                <Row label="Módulo / Área" htmlFor="bug-module">
                     <select
                         id="bug-module"
                         name="module"
@@ -184,150 +182,146 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                         onChange={handleChange}
                         className={inputClass}
                     >
-                        <option value="" className="bg-[#1a1a2e]">Selecionar...</option>
+                        <option value="" className="bg-gray-950">Selecionar...</option>
                         {MODULES.map((m) => (
-                            <option key={m} value={m} className="bg-[#1a1a2e]">
+                            <option key={m} value={m} className="bg-gray-950">
                                 {m}
                             </option>
                         ))}
                     </select>
-                </div>
-            </div>
+                </Row>
 
-            <div>
-                <span id="bug-severity-label" className={labelClass}>
-                    Severidade <span className="text-red-400">*</span>
-                </span>
-                <div role="group" aria-labelledby="bug-severity-label" className="grid grid-cols-4 gap-2">
-                    {SEVERITIES.map(({ value, label }) => {
-                        const isActive = form.severity === value;
-                        const styles = severityStyles[value];
-                        return (
-                            <button
-                                key={value}
-                                type="button"
-                                onClick={() => setForm((p) => ({ ...p, severity: value }))}
-                                className={`py-2 px-3 rounded-lg border text-xs font-medium transition-all ${
-                                    isActive ? styles.active : styles.idle
-                                }`}
-                            >
-                                {label}
-                            </button>
-                        );
-                    })}
-                </div>
-            </div>
+                <Row label="Severidade" required hint="O quanto isso atrapalha a partida.">
+                    <div role="group" aria-label="Severidade" className="flex flex-wrap gap-2">
+                        {SEVERITIES.map(({ value, label }) => {
+                            const isActive = form.severity === value;
+                            return (
+                                <button
+                                    key={value}
+                                    type="button"
+                                    onClick={() => setForm((p) => ({ ...p, severity: value }))}
+                                    aria-pressed={isActive}
+                                    className={`inline-flex items-center gap-2 py-2 px-3.5 rounded-lg border text-xs font-medium transition-colors ${
+                                        isActive
+                                            ? "border-purple-500 bg-purple-500/10 text-white"
+                                            : "border-gray-800 text-gray-500 hover:text-gray-300 hover:border-gray-700"
+                                    }`}
+                                >
+                                    <span className={`w-1.5 h-1.5 rounded-full ${severityDot[value]}`} />
+                                    {label}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </Row>
 
-            {!isAuthenticated && (
-                <div>
-                    <label htmlFor="reporterEmail" className={labelClass}>
-                        Seu e-mail <span className="text-red-400">*</span>
-                    </label>
-                    <input
-                        id="reporterEmail"
-                        type="email"
-                        name="reporterEmail"
-                        value={reporterEmail}
-                        onChange={(e) => setReporterEmail(e.target.value)}
+                {!isAuthenticated && (
+                    <Row
+                        label="Seu e-mail"
+                        htmlFor="reporterEmail"
                         required
-                        placeholder="voce@exemplo.com"
+                        hint="Usamos para te responder sobre o andamento."
+                    >
+                        <input
+                            id="reporterEmail"
+                            type="email"
+                            name="reporterEmail"
+                            value={reporterEmail}
+                            onChange={(e) => setReporterEmail(e.target.value)}
+                            required
+                            placeholder="voce@exemplo.com"
+                            className={inputClass}
+                        />
+                    </Row>
+                )}
+
+                <Row
+                    label="Descrição"
+                    htmlFor="bug-description"
+                    required
+                    hint="O que aconteceu e o que era esperado."
+                >
+                    <textarea
+                        id="bug-description"
+                        name="description"
+                        value={form.description}
+                        onChange={handleChange}
+                        required
+                        rows={4}
+                        placeholder="Explique o que aconteceu, o que você esperava que acontecesse e qualquer contexto relevante..."
+                        className={inputClass + " resize-y"}
+                    />
+                </Row>
+
+                <Row label="Passos para reproduzir" htmlFor="bug-steps">
+                    <textarea
+                        id="bug-steps"
+                        name="steps"
+                        value={form.steps}
+                        onChange={handleChange}
+                        rows={3}
+                        placeholder={"1. Abrir a tela X\n2. Clicar em Y\n3. Observar o erro Z"}
+                        className={inputClass + " resize-y"}
+                    />
+                </Row>
+
+                <Row label="Data do ocorrido" htmlFor="bug-date">
+                    <input
+                        id="bug-date"
+                        type="date"
+                        name="occurredAt"
+                        value={form.occurredAt}
+                        onChange={handleChange}
                         className={inputClass}
                     />
-                    <p className="text-xs text-white/30 mt-1">
-                        Usamos para te responder sobre o andamento do report.
-                    </p>
-                </div>
-            )}
+                </Row>
 
-            <div>
-                <label htmlFor="bug-description" className={labelClass}>
-                    Descrição <span className="text-red-400">*</span>
-                </label>
-                <textarea
-                    id="bug-description"
-                    name="description"
-                    value={form.description}
-                    onChange={handleChange}
-                    required
-                    rows={4}
-                    placeholder="Explique o que aconteceu, o que você esperava que acontecesse e qualquer contexto relevante..."
-                    className={inputClass + " resize-y"}
-                />
-            </div>
-
-            <div>
-                <label htmlFor="bug-steps" className={labelClass}>Passos para reproduzir</label>
-                <textarea
-                    id="bug-steps"
-                    name="steps"
-                    value={form.steps}
-                    onChange={handleChange}
-                    rows={3}
-                    placeholder={"1. Abrir a tela X\n2. Clicar em Y\n3. Observar o erro Z"}
-                    className={inputClass + " resize-y"}
-                />
-            </div>
-
-            <div>
-                <label htmlFor="bug-date" className={labelClass}>Data do ocorrido</label>
-                <input
-                    id="bug-date"
-                    type="date"
-                    name="occurredAt"
-                    value={form.occurredAt}
-                    onChange={handleChange}
-                    className={inputClass}
-                />
-            </div>
-
-            <div>
-                <span className={labelClass}>Anexos</span>
-                <label className="flex flex-col items-center justify-center w-full border border-dashed border-white/15 rounded-lg py-5 bg-white/5 cursor-pointer hover:border-white/30 hover:bg-white/8 transition-colors">
-                    <UploadIcon className="w-5 h-5 text-white/30 mb-1" />
-                    <span className="text-sm text-white/40">Clique para anexar ou arraste arquivos aqui</span>
-                    <span className="text-xs text-white/25 mt-0.5">PNG, JPG, GIF, MP4, logs — até 5MB por arquivo</span>
-                    <input
-                        type="file"
-                        multiple
-                        accept="image/*,video/*,.txt,.log,.pdf"
-                        onChange={handleFileChange}
-                        className="hidden"
-                    />
-                </label>
-                {files.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                        {files.map((file, i) => (
-                            <span
-                                key={i}
-                                className="flex items-center gap-1.5 px-3 py-1 bg-blue-500/15 border border-blue-500/30 text-blue-300 text-xs rounded-full"
-                            >
-                {file.name}
-                                <button
-                                    type="button"
-                                    onClick={() => removeFile(i)}
-                                    className="text-blue-400 hover:text-blue-200 leading-none"
-                                >
-                  ×
-                </button>
-              </span>
-                        ))}
-                    </div>
-                )}
+                <Row label="Anexos" hint="Até 5 arquivos, 5MB cada.">
+                    <label className="flex items-center gap-3 w-full border border-dashed border-gray-800 rounded-lg px-4 py-3 cursor-pointer hover:border-purple-500/60 transition-colors">
+                        <Paperclip className="w-4 h-4 text-gray-600 shrink-0" />
+                        <span className="text-sm text-gray-500">
+                            Anexar prints, vídeos ou logs
+                            <span className="block text-xs text-gray-700">PNG, JPG, GIF, MP4, .txt, .log, .pdf</span>
+                        </span>
+                        <input
+                            type="file"
+                            multiple
+                            accept="image/*,video/*,.txt,.log,.pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                        />
+                    </label>
+                    {files.length > 0 && (
+                        <ul className="mt-3 divide-y divide-gray-900 border-t border-gray-900">
+                            {files.map((file, i) => (
+                                <li key={i} className="flex items-center justify-between gap-3 py-2 text-sm text-gray-400">
+                                    <span className="truncate">{file.name}</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => removeFile(i)}
+                                        aria-label={`Remover ${file.name}`}
+                                        className="text-gray-600 hover:text-red-400 transition-colors shrink-0"
+                                    >
+                                        <X size={15} />
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </Row>
             </div>
 
             {submitError && (
-                <div className="flex items-center gap-2 text-red-300 bg-red-500/10 border border-red-500/25 rounded-lg px-3 py-2.5 text-sm">
-                    {submitError}
-                </div>
+                <p className="mt-5 text-sm text-red-400 border-l-2 border-red-500 pl-3">{submitError}</p>
             )}
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
+            <div className="flex justify-end gap-3 mt-8 pt-5 border-t border-gray-900">
                 {onCancel && (
                     <button
                         type="button"
                         onClick={onCancel}
                         disabled={isSubmitting}
-                        className="px-4 py-2 text-sm border border-white/15 rounded-lg text-white/50 hover:bg-white/8 hover:text-white/80 transition-colors disabled:opacity-50"
+                        className="px-4 py-2.5 text-sm rounded-lg text-gray-500 hover:text-gray-200 transition-colors disabled:opacity-50"
                     >
                         Cancelar
                     </button>
@@ -335,42 +329,11 @@ export default function BugReportForm({ onSubmit, onCancel }: BugReportFormProps
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-5 py-2 text-sm bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 active:scale-95 transition-all disabled:opacity-60 disabled:active:scale-100"
+                    className="px-5 py-2.5 text-sm bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-semibold transition-colors disabled:opacity-60"
                 >
                     {isSubmitting ? "Enviando..." : "Enviar report"}
                 </button>
             </div>
         </form>
-    );
-}
-
-/* ── Inline icons ── */interface IconProps {
-    className?: string;
-}
-
-function BugIcon({ className }: IconProps) {
-    return (
-        <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
-            <circle cx="8" cy="9" r="4" />
-            <path d="M6 4.5C6 3.4 6.9 2.5 8 2.5s2 .9 2 2" />
-            <path d="M4 7H2M14 7h-2M4 11H2M14 11h-2" />
-        </svg>
-    );
-}
-
-function CheckIcon({ className }: IconProps) {
-    return (
-        <svg className={className} viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 11l4 4 8-8" />
-        </svg>
-    );
-}
-
-function UploadIcon({ className }: IconProps) {
-    return (
-        <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M10 12V4M7 7l3-3 3 3" />
-            <path d="M3 13v2a2 2 0 002 2h10a2 2 0 002-2v-2" />
-        </svg>
     );
 }
