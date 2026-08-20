@@ -106,8 +106,7 @@ src/
 │   │   └── CardNav.tsx
 │   ├── AnimatedList.tsx
 │   ├── Layout.tsx
-│   ├── ProtectedRoute.tsx
-│   └── SEO.tsx
+│   └──  ProtectedRoute.tsx
 ├── context/
 │   └── AuthContext.tsx
 ├── features/
@@ -186,8 +185,8 @@ TokenForge é um conteúdo de fã não oficial, permitido pela Política de Cont
 
 ## 🔒 Acesso ao Backend
 
-Este repositório contém apenas o código do frontend. O backend (API Java/Spring Boot) é mantido em repositório privado.
+Este repositório contém apenas o código do frontend. O backend (API Java/Spring Boot) é mantido em repositório público separado.
 
-Para solicitar acesso ao backend, entre em contato através das **Issues** deste repositório ou envie uma mensagem diretamente ao mantenedor do projeto.
+É possível enviar uma pull request para o backend  ou envie uma mensagem diretamente ao mantenedor do projeto.
 
 > Contribuidores que desejam colaborar com o frontend não precisam de acesso ao backend — basta apontar o `VITE_API_URL` para a instância pública da API quando disponível.
