@@ -105,7 +105,6 @@ export const GamePage = () => {
 
     return (
         <div className="flex flex-col min-h-screen pb-24">
-            {/* Barra da mesa: contagem como placar tipográfico, ações agrupadas à direita */}
             <div className="sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md border-b border-gray-900">
                 <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-3">
                     <div className="flex items-baseline gap-3">
@@ -178,7 +177,6 @@ export const GamePage = () => {
                                     <TokenCard data={token} className="shadow-2xl" />
                                 </div>
 
-                                {/* Controles em uma barra única sob o token: contador à esquerda, ações à direita */}
                                 <div className="mt-3 w-full flex items-center justify-between gap-2 border-t border-gray-900 pt-3">
                                     <div className="flex items-center gap-2">
                                         <button

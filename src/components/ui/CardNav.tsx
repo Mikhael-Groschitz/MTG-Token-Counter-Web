@@ -11,7 +11,6 @@ type CardNavLink = {
 
 export type CardNavItem = {
     label: string;
-    /** Mantido por compatibilidade com o uso atual; o novo menu não usa cor de fundo por bloco. */
     bgColor?: string;
     textColor?: string;
     links: CardNavLink[];
@@ -28,10 +27,6 @@ export interface CardNavProps {
     onLogout?: () => void;
 }
 
-/**
- * Barra de navegação enxuta: régua fina, tipografia e colunas de links.
- * Sem cartões coloridos empilhados, sem hover-scale decorativo.
- */
 const CardNav: React.FC<CardNavProps> = ({
     items,
     className = '',

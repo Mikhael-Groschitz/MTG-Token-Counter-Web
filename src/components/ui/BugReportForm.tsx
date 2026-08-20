@@ -37,7 +37,6 @@ const SEVERITIES: SeverityOption[] = [
 
 const MODULES: string[] = ["Mesa de jogo", "Acesso/Perfil", "Tokens", "Outro"];
 
-/** Severidade sem 4 caixas coloridas: um seletor sóbrio com um ponto de cor. */
 const severityDot: Record<Severity, string> = {
     low: "bg-green-400",
     medium: "bg-amber-400",
@@ -51,7 +50,6 @@ const inputClass =
 
 const labelClass = "block text-xs font-medium text-gray-400 mb-1.5";
 
-/** Linha de campo: rótulo à esquerda, controle à direita, separada por régua. */
 function Row({
     label,
     htmlFor,

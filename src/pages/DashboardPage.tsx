@@ -88,7 +88,6 @@ export const DashboardPage = () => {
 
     return (
         <div className="min-h-screen max-w-6xl mx-auto px-4 pt-8 pb-24">
-            {/* Cabeçalho: título + estado da biblioteca na mesma linha, abas como navegação real */}
             <header className="flex flex-col gap-6">
                 <div className="flex flex-wrap items-end justify-between gap-4">
                     <div className="border-l-2 border-purple-500 pl-5">
@@ -164,7 +163,6 @@ export const DashboardPage = () => {
                             {libraryTokens.map(token => (
                                 <div key={token.id} className="flex flex-col items-center w-full max-w-[300px]">
                                     <TokenCard data={token} className="shadow-xl" />
-                                    {/* Ações sempre visíveis, logo abaixo do token — sem overlay no hover */}
                                     <div className="flex items-center gap-1 mt-3 text-xs">
                                         <button
                                             onClick={() => openEdit(token)}
